@@ -31,3 +31,10 @@ body{
 .hero p{
     font-size:1.2rem;
 }
+
+
+.logo {
+    width: 120px;
+    height: auto;
+    opacity: 0.85;
+}
