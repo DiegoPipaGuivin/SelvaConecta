@@ -1,40 +1,287 @@
-body{
-    font-family: Arial, sans-serif;
+/* Global Styles & Variables */
+:root {
+    --primary: #0A5C36;
+    --primary-hover: #074327;
+    --primary-light: #eefdf5;
+    --accent: #F59E0B;
+    --dark: #1E293B;
+    --light: #F8FAFC;
+    --border-color: #E2E8F0;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hero{
-    height:100vh;
-
-    height: 100vh;
-    background-image: url("Selva-Amazonica.jpg");
-    background-size: cover;
-    background-position: center;
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
 }
 
-.overlay{
-
-    width:100%;
-    height:100%;
-
-    background:rgba(0,0,0,.45);
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
+h1, h2, h3, h4, h5, h6, .font-outfit {
+    font-family: 'Outfit', sans-serif;
 }
 
-.hero h1{
-    font-size:4rem;
-    font-weight:bold;
+/* Navbar */
+.navbar {
+    border-bottom: 1px solid var(--border-color);
 }
-
-.hero p{
-    font-size:1.2rem;
+.brand-name {
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
 }
-
-
 .logo {
-    width: 120px;
-    height: 50PX;
-    opacity: 0.85;
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Hero Section */
+.hero {
+    height: 70vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("Selva-Amazonica.jpg") no-repeat center center/cover;
+    position: relative;
+}
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.hero p {
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Custom Buttons */
+.btn-success {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    transition: var(--transition);
+}
+.btn-success:hover, .btn-success:focus {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+.btn-success.rounded-pill {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+}
+
+/* Cards & Hover Effects */
+.card-hover {
+    transition: var(--transition);
+}
+.card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(10, 92, 54, 0.08) !important;
+}
+.card-img-custom {
+    height: 220px;
+    object-fit: cover;
+    transition: var(--transition);
+}
+.card-hover:hover .card-img-custom {
+    transform: scale(1.03);
+}
+
+/* Inputs styling */
+.focus-ring-none:focus {
+    box-shadow: none;
+    border-color: var(--primary);
+}
+
+/* Details Page Layout */
+.detail-header-section {
+    padding: 2.5rem 0 1.5rem;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+}
+.detail-main-img {
+    height: 480px;
+    object-fit: cover;
+    border-radius: 1rem;
+    width: 100%;
+}
+.badge-verificado {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(10, 92, 54, 0.15);
+}
+
+/* Guide Card */
+.guide-card {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+.guide-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-light);
+}
+
+/* Booking Widget Sidebar */
+.booking-widget {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+}
+.sticky-widget {
+    position: sticky;
+    top: 90px;
+}
+.price-tag {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+.booking-input {
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+}
+.booking-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(10, 92, 54, 0.1);
+}
+
+/* Booking Success Modal/View */
+.booking-success-view {
+    text-align: center;
+    padding: 2.5rem 1rem;
+}
+.success-icon-wrapper {
+    width: 72px;
+    height: 72px;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-size: 2rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    animation: scaleIn 0.5s ease-out;
+}
+
+/* Comments & Reviews Section */
+.rating-bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.rating-bar-label {
+    width: 60px;
+    font-size: 0.85rem;
+    color: var(--dark);
+}
+.rating-bar-progress {
+    flex-grow: 1;
+    height: 8px;
+    background-color: #E2E8F0;
+    border-radius: 4px;
+    margin: 0 1rem;
+    overflow: hidden;
+}
+.rating-bar-fill {
+    height: 100%;
+    background-color: var(--accent);
+    border-radius: 4px;
+}
+.rating-bar-count {
+    width: 30px;
+    font-size: 0.85rem;
+    text-align: right;
+    color: #64748B;
+}
+
+.comment-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+.comment-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+.user-initials-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* Rating Star Input */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 0.25rem;
+}
+.star-rating-input input {
+    display: none;
+}
+.star-rating-input label {
+    font-size: 1.8rem;
+    color: #CBD5E1;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label,
+.star-rating-input input:checked ~ label {
+    color: var(--accent);
+}
+
+/* Utilities */
+.filter-white {
+    filter: brightness(0) invert(1);
+}
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }

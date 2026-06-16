@@ -1,11 +1,307 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tour en la Amazonía - SelvaConecta</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <img src="logo.png" alt="SelvaConecta" class="logo">
+            <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
+        </a>
+        <a href="index.html" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+</nav>
+
+<!-- Header Info -->
+<div class="detail-header-section">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html" class="text-success text-decoration-none">Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Tour en la Amazonía</li>
+            </ol>
+        </nav>
+        <h1 class="font-outfit fw-bold mb-2">Tour en la Amazonía</h1>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-star-fill text-warning me-1"></i>
+                <span class="fw-bold me-1">4.8</span>
+                <span class="text-muted" id="reviews-count-header">12 opiniones</span>
+            </div>
+            <div class="text-muted"><i class="bi bi-geo-alt-fill text-danger me-1"></i> Iquitos, Loreto, Perú</div>
+            <span class="badge-verificado"><i class="bi bi-patch-check-fill me-1"></i> Guía Nativo Calificado</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container py-5">
+    <div class="row g-5">
+        
+        <!-- Left Column: Details -->
+        <div class="col-lg-8">
+            <!-- Main Image -->
+            <img src="Amazonia.jpg" class="detail-main-img shadow-sm mb-4" alt="Tour en la Amazonía">
+            
+            <!-- Description -->
+            <h3 class="font-outfit fw-bold mb-3">Descripción General</h3>
+            <p class="text-muted fs-6 mb-4">
+                Navega por el majestuoso río Amazonas, el río más largo y caudaloso del mundo, y adéntrate en los misterios de la selva tropical. En esta experiencia guiada, navegarás en embarcaciones tradicionales seguras, observarás los emblemáticos delfines rosados y grises en su hábitat natural, y harás paradas para avistar aves exóticas y monos en las copas de los árboles gigantes. Disfrutarás de un auténtico almuerzo amazónico preparado a bordo por cocineros de la comunidad ribereña.
+            </p>
+
+            <hr class="my-4">
+
+            <!-- What's included -->
+            <h4 class="font-outfit fw-semibold mb-3">¿Qué incluye esta experiencia?</h4>
+            <div class="row g-3 mb-4 text-muted">
+                <div class="col-md-6 d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                    <div>Navegación guiada en bote motorizado típico con chalecos salvavidas.</div>
+                </div>
+                <div class="col-md-6 d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                    <div>Almuerzo amazónico tradicional a base de Juane o pescado fresco del día.</div>
+                </div>
+                <div class="col-md-6 d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                    <div>Guía nativo bilingüe certificado (Etiología local y rastreo).</div>
+                </div>
+                <div class="col-md-6 d-flex align-items-start gap-2">
+                    <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                    <div>Entradas y permisos a las zonas de reserva natural.</div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Guide Profile -->
+            <h4 class="font-outfit fw-semibold mb-3">Tu Guía Local Calificado</h4>
+            <div class="guide-card shadow-sm mb-5">
+                <img src="logo.png" class="guide-avatar" alt="Manuel Chanchari" id="guide-photo-placeholder">
+                <div>
+                    <h5 class="mb-1 font-outfit fw-bold text-success">Manuel Chanchari</h5>
+                    <p class="text-muted small mb-2"><i class="bi bi-patch-check-fill text-success me-1"></i> Guía Certificado - Etnia Kukama</p>
+                    <p class="mb-0 text-muted fs-6">
+                        "Nací y crecí a orillas del Amazonas. Llevo más de 15 años guiando a viajeros y compartiendo la sabiduría botánica de mis ancestros. Te enseñaré a escuchar la selva".
+                    </p>
+                    <div class="mt-2 text-muted small"><strong>Idiomas:</strong> Español, Inglés, Kukama</div>
+                </div>
+            </div>
+
+            <!-- Review List Section -->
+            <hr class="my-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="font-outfit fw-bold mb-0" id="comment-count-title">Opiniones (12)</h3>
+            </div>
+            
+            <div id="comments-list">
+                <!-- Loaded dynamically by JS -->
+            </div>
+        </div>
+
+        <!-- Right Column: Booking Widget -->
+        <div class="col-lg-4">
+            <div class="booking-widget sticky-widget shadow-sm">
+                <div class="mb-3">
+                    <span class="price-tag">S/150</span>
+                    <span class="text-muted"> / por persona</span>
+                </div>
+                <div class="badge bg-light text-success border border-success-subtle mb-4 px-3 py-2 rounded-pill">
+                    <i class="bi bi-tags-fill me-1"></i> Descuento del 30% para niños
+                </div>
+
+                <form id="booking-form">
+                    <div id="booking-fields">
+                        <div class="mb-3">
+                            <label for="booking-date" class="form-label fw-semibold text-muted small">FECHA DEL VIAJE</label>
+                            <input type="date" id="booking-date" class="form-control booking-input" required>
+                            <div class="invalid-feedback text-danger small mt-1"></div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label for="booking-adults" class="form-label fw-semibold text-muted small">ADULTOS</label>
+                                <input type="number" id="booking-adults" class="form-control booking-input" min="1" max="15" value="1" required>
+                                <div class="invalid-feedback text-danger small mt-1"></div>
+                            </div>
+                            <div class="col-6">
+                                <label for="booking-children" class="form-label fw-semibold text-muted small">NIÑOS (3-12 AÑOS)</label>
+                                <input type="number" id="booking-children" class="form-control booking-input" min="0" max="15" value="0">
+                            </div>
+                        </div>
+
+                        <!-- Contact details -->
+                        <div class="mb-3">
+                            <label for="booking-name" class="form-label fw-semibold text-muted small">NOMBRE COMPLETO</label>
+                            <input type="text" id="booking-name" class="form-control booking-input" placeholder="Nombre completo" required>
+                            <div class="invalid-feedback text-danger small mt-1"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="booking-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
+                            <input type="email" id="booking-email" class="form-control booking-input" placeholder="ejemplo@correo.com" required>
+                            <div class="invalid-feedback text-danger small mt-1"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="booking-phone" class="form-label fw-semibold text-muted small">TELÉFONO / WHATSAPP</label>
+                            <input type="tel" id="booking-phone" class="form-control booking-input" placeholder="Nro telefónico" required>
+                            <div class="invalid-feedback text-danger small mt-1"></div>
+                        </div>
+
+                        <!-- Price Breakdown -->
+                        <div class="border-top pt-3 mb-4">
+                            <div class="d-flex justify-content-between mb-1 text-muted small">
+                                <span>Adultos:</span>
+                                <span id="adult-price-summary">S/150 (1 × S/150)</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 text-muted small">
+                                <span>Niños:</span>
+                                <span id="child-price-summary">S/0 (0 × S/105)</span>
+                            </div>
+                            <div class="d-flex justify-content-between pt-2 border-top">
+                                <strong class="text-dark">Total estimado:</strong>
+                                <strong class="fs-5 text-success" id="total-price">S/150</strong>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold">
+                            Reservar Experiencia
+                        </button>
+                    </div>
+
+                    <!-- Booking Success State -->
+                    <div id="booking-success" class="booking-success-view d-none">
+                        <div class="success-icon-wrapper">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <h4 class="font-outfit fw-bold text-success mb-2">¡Reserva Registrada!</h4>
+                        <p class="text-muted small mb-4">Tu solicitud ha sido enviada con éxito al guía local calificado.</p>
+                        
+                        <div class="bg-light p-3 rounded-3 text-start mb-4 text-muted small">
+                            <div class="mb-2"><strong>Código:</strong> <span class="text-dark fw-bold" id="success-ref"></span></div>
+                            <div class="mb-2"><strong>Fecha:</strong> <span class="text-dark" id="success-date"></span></div>
+                            <div class="mb-2"><strong>Viajeros:</strong> <span class="text-dark" id="success-travelers"></span></div>
+                            <div class="mb-2"><strong>Total:</strong> <span class="text-dark fw-semibold" id="success-total"></span></div>
+                            <div class="mb-0"><strong>Confirmación enviada a:</strong> <span class="text-dark" id="success-email"></span></div>
+                        </div>
+
+                        <p class="text-muted small mb-0">El guía se comunicará contigo vía WhatsApp en las próximas horas para coordinar el punto de partida.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Review Form and Distributions -->
+    <div class="row g-5 mt-4">
+        <div class="col-lg-8">
+            <div class="bg-white p-4 rounded-4 border shadow-sm">
+                <h4 class="font-outfit fw-bold mb-3">Deja tu opinión</h4>
+                <form id="comment-form">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small d-block">TU VALORACIÓN</label>
+                        <div class="star-rating-input">
+                            <input type="radio" id="star5" name="comment-rating" value="5"><label for="star5" title="Excelente"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star4" name="comment-rating" value="4"><label for="star4" title="Bueno"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star3" name="comment-rating" value="3"><label for="star3" title="Regular"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star2" name="comment-rating" value="2"><label for="star2" title="Malo"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star1" name="comment-rating" value="1"><label for="star1" title="Pésimo"><i class="bi bi-star-fill"></i></label>
+                        </div>
+                        <div id="comment-rating-error" class="text-danger small mt-1" style="display:none;"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment-author-name" class="form-label fw-semibold text-muted small">TU NOMBRE</label>
+                        <input type="text" id="comment-author-name" class="form-control booking-input" placeholder="Nombre completo" required>
+                        <div id="comment-name-error" class="text-danger small mt-1" style="display:none;"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment-text" class="form-label fw-semibold text-muted small">TU COMENTARIO</label>
+                        <textarea id="comment-text" rows="4" class="form-control booking-input" placeholder="Describe tu experiencia detalladamente para ayudar a otros viajeros..." required></textarea>
+                        <div id="comment-text-error" class="text-danger small mt-1" style="display:none;"></div>
+                    </div>
+                    <button type="submit" class="btn btn-success px-4 py-2 rounded-pill fw-semibold">
+                        Enviar opinión
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="bg-white p-4 rounded-4 border shadow-sm h-100">
+                <h5 class="font-outfit fw-bold mb-3">Distribución de calificaciones</h5>
+                
+                <div class="rating-bar-container">
+                    <span class="rating-bar-label">5 estrellas</span>
+                    <div class="rating-bar-progress">
+                        <div class="rating-bar-fill" style="width: 83%"></div>
+                    </div>
+                    <span class="rating-bar-count">10</span>
+                </div>
+                <div class="rating-bar-container">
+                    <span class="rating-bar-label">4 estrellas</span>
+                    <div class="rating-bar-progress">
+                        <div class="rating-bar-fill" style="width: 8%"></div>
+                    </div>
+                    <span class="rating-bar-count">1</span>
+                </div>
+                <div class="rating-bar-container">
+                    <span class="rating-bar-label">3 estrellas</span>
+                    <div class="rating-bar-progress">
+                        <div class="rating-bar-fill" style="width: 8%"></div>
+                    </div>
+                    <span class="rating-bar-count">1</span>
+                </div>
+                <div class="rating-bar-container">
+                    <span class="rating-bar-label">2 estrellas</span>
+                    <div class="rating-bar-progress">
+                        <div class="rating-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="rating-bar-count">0</span>
+                </div>
+                <div class="rating-bar-container">
+                    <span class="rating-bar-label">1 estrella</span>
+                    <div class="rating-bar-progress">
+                        <div class="rating-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="rating-bar-count">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container text-center">
+        <img src="logo.png" alt="SelvaConecta" class="logo mb-3 filter-white" style="height: 40px; width: auto;">
+        <p class="mb-0 text-white-50">&copy; 2026 SelvaConecta. Viajes sostenibles con guías locales calificados. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="detalle.js"></script>
+<script>
+    // Customize guide picture dynamically if we want, but since logo is present we use it as a fallback
+    // Or we can use generate_image to get a nice guide photo
+    document.getElementById('guide-photo-placeholder').src = "logo.png";
+</script>
 </body>
 </html>
