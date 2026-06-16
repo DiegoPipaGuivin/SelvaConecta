@@ -2,317 +2,377 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-<title>SelvaConecta</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelvaConecta - Turismo Vivencial en la Selva Peruana</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
     <div class="container">
-       <a class="navbar-brand d-flex align-items-center" href="#">
-    <img src="logo.png" alt="SelvaConecta" class="logo">
-    <span class="ms-2 brand-name"></span>
-</a>
-
-        <button class="btn btn-success">
-            Explorar
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <img src="logo.png" alt="SelvaConecta" class="logo">
+            <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
+        </a>
+        <button class="btn btn-success rounded-pill px-4" id="btn-explorar">
+            <i class="bi bi-compass me-2"></i>Explorar
         </button>
     </div>
 </nav>
 
-<section class="hero">
-
-    <div class="overlay">
-
-        <div class="container text-center text-white">
-
-            <h1>
+<section class="hero d-flex align-items-center text-center">
+    <div class="overlay w-100 h-100 d-flex align-items-center justify-content-center">
+        <div class="container text-white py-5">
+            <h1 class="display-3 fw-bold font-outfit mb-3 fade-in">
                 Descubre la selva de forma auténtica
             </h1>
-
-            <p>
-                Reserva experiencias únicas con comunidades locales.
+            <p class="fs-4 fw-light mb-4 text-white-50">
+                Reserva experiencias únicas con comunidades locales y guías calificados.
             </p>
-
-            <button class="btn btn-success btn-lg">
-                Explorar experiencias
+            <button class="btn btn-success btn-lg rounded-pill px-5 shadow-lg hover-scale" onclick="document.getElementById('experiencias').scrollIntoView({behavior: 'smooth'})">
+                Explorar experiencias <i class="bi bi-arrow-down-short ms-1"></i>
             </button>
-
         </div>
-
     </div>
-
 </section>
 
-<section class="container py-5">
-
-    <h2 class="mb-4 text-center">
+<section class="container py-5" id="experiencias">
+    <h2 class="mb-2 text-center font-outfit fw-bold">
         Experiencias Disponibles
     </h2>
+    <p class="text-center text-muted mb-5">
+        Elige tu próxima aventura guiada por pobladores nativos certificados.
+    </p>
 
-    <!-- Buscador -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <input type="text"
-                   class="form-control"
-                   placeholder="Buscar experiencias...">
+    <!-- Buscador y Filtros -->
+    <div class="row g-3 mb-5 justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white border border-light">
+                <span class="input-group-text bg-white border-0 ps-3 text-muted">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text"
+                       id="search-input"
+                       class="form-control border-0 py-3 ps-1 focus-ring-none"
+                       placeholder="Buscar por título, destino o actividad...">
+            </div>
         </div>
 
-        <div class="col-md-4">
-            <select class="form-select">
-                <option>Todas las categorías</option>
-                <option>Selva</option>
-                <option>Cultura</option>
-                <option>Aventura</option>
-            </select>
+        <div class="col-md-4 col-lg-3">
+            <div class="shadow-sm rounded-pill overflow-hidden bg-white border border-light">
+                <select id="category-select" class="form-select border-0 py-3 ps-3 focus-ring-none">
+                    <option value="todas">Todas las categorías</option>
+                    <option value="selva">Selva</option>
+                    <option value="cultura">Cultura</option>
+                    <option value="aventura">Aventura</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <div class="row g-4">
+    <!-- Lista de Experiencias -->
+    <div class="row g-4" id="experiences-container">
 
         <!-- Experiencia 1 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-
-                <img src="Amazonia.jpg" class="card-img-top">
-
-                <div class="card-body">
-
-                    <h5>Tour en la Amazonía</h5>
-
-                    <p class="text-muted">
-                        Iquitos, Loreto
-                    </p>
-
-                    <p>
-                        Navega por el río Amazonas y descubre la fauna local.
-                    </p>
-
-                    <div class="d-flex justify-content-between">
-
-                        <span class="text-warning">
-                            ★ 4.8
-                        </span>
-
-                        <strong>S/150</strong>
-
+        <div class="col-md-6 col-lg-4 experience-card" data-category="selva">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                <div class="position-relative">
+                    <img src="Amazonia.jpg" class="card-img-top card-img-custom" alt="Tour en la Amazonía">
+                    <span class="badge bg-success position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm">Selva</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span class="text-muted small fw-medium">Iquitos, Loreto</span>
                     </div>
-
+                    <h5 class="card-title font-outfit fw-semibold mb-2">Tour en la Amazonía</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Navega por el majestuoso río Amazonas y descubre la flora y fauna local con guías certificados.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <div>
+                            <span class="text-warning fw-semibold">
+                                <i class="bi bi-star-fill"></i> 4.8
+                            </span>
+                            <span class="text-muted small">(12 opiniones)</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted block d-block">Por persona</small>
+                            <span class="fs-5 fw-bold text-success">S/150</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="card-footer bg-white border-0">
-                    <button class="btn btn-success w-100">
-                        Ver Detalle
-                    </button>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="detalleAma.html" class="btn btn-success w-100 rounded-pill py-2.5 fw-medium">
+                        Ver Detalle <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
 
         <!-- Experiencia 2 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-
-                <img src="Yagua-el-pueblo-rojodel-Amazonas-Peruano.jpg" class="card-img-top">
-
-                <div class="card-body">
-
-                    <h5>Comunidad Nativa Yagua</h5>
-
-                    <p class="text-muted">
-                        Amazonas Peruana
-                    </p>
-
-                    <p>
-                        Conoce costumbres, danzas y gastronomía ancestral.
-                    </p>
-
-                    <div class="d-flex justify-content-between">
-
-                        <span class="text-warning">
-                            ★ 4.9
-                        </span>
-
-                        <strong>S/180</strong>
-
+        <div class="col-md-6 col-lg-4 experience-card" data-category="cultura">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                <div class="position-relative">
+                    <img src="Yagua-el-pueblo-rojodel-Amazonas-Peruano.jpg" class="card-img-top card-img-custom" alt="Comunidad Nativa Yagua">
+                    <span class="badge bg-primary position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm">Cultura</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span class="text-muted small fw-medium">Amazonas Peruana</span>
                     </div>
-
+                    <h5 class="card-title font-outfit fw-semibold mb-2">Comunidad Nativa Yagua</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Conoce costumbres ancestrales, danzas tradicionales y la gastronomía típica de los pueblos originarios.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <div>
+                            <span class="text-warning fw-semibold">
+                                <i class="bi bi-star-fill"></i> 4.9
+                            </span>
+                            <span class="text-muted small">(24 opiniones)</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted block d-block">Por persona</small>
+                            <span class="fs-5 fw-bold text-success">S/180</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="card-footer bg-white border-0">
-                    <button class="btn btn-success w-100">
-                        Ver Detalle
-                    </button>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="detalleYagu.html" class="btn btn-success w-100 rounded-pill py-2.5 fw-medium">
+                        Ver Detalle <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
 
         <!-- Experiencia 3 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-
-                <img src="faunajpg.jpg" class="card-img-top">
-
-                <div class="card-body">
-
-                    <h5>Avistamiento de Fauna</h5>
-
-                    <p class="text-muted">
-                        Reserva Natural
-                    </p>
-
-                    <p>
-                        Observa monos, aves exóticas y especies únicas.
-                    </p>
-
-                    <div class="d-flex justify-content-between">
-
-                        <span class="text-warning">
-                            ★ 4.7
-                        </span>
-
-                        <strong>S/120</strong>
-
+        <div class="col-md-6 col-lg-4 experience-card" data-category="selva">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                <div class="position-relative">
+                    <img src="faunajpg.jpg" class="card-img-top card-img-custom" alt="Avistamiento de Fauna">
+                    <span class="badge bg-success position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm">Selva</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span class="text-muted small fw-medium">Reserva Natural</span>
                     </div>
-
+                    <h5 class="card-title font-outfit fw-semibold mb-2">Avistamiento de Fauna</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Observa monos, delfines rosados, aves exóticas y plantas medicinales en su hábitat natural protegido.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <div>
+                            <span class="text-warning fw-semibold">
+                                <i class="bi bi-star-fill"></i> 4.7
+                            </span>
+                            <span class="text-muted small">(9 opiniones)</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted block d-block">Por persona</small>
+                            <span class="fs-5 fw-bold text-success">S/120</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="card-footer bg-white border-0">
-                    <button class="btn btn-success w-100">
-                        Ver Detalle
-                    </button>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="detalleFauna.html" class="btn btn-success w-100 rounded-pill py-2.5 fw-medium">
+                        Ver Detalle <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
 
         <!-- Experiencia 4 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-
-                <img src="canotaje.jpg"
-                     class="card-img-top">
-
-                <div class="card-body">
-
-                    <h5>Canotaje Amazónico</h5>
-
-                    <p class="text-muted">
-                        Río Nanay
-                    </p>
-
-                    <p>
-                        Vive una aventura remando por paisajes naturales.
-                    </p>
-
-                    <div class="d-flex justify-content-between">
-
-                        <span class="text-warning">
-                            ★ 4.6
-                        </span>
-
-                        <strong>S/140</strong>
-
+        <div class="col-md-6 col-lg-4 experience-card" data-category="aventura">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                <div class="position-relative">
+                    <img src="canotaje.jpg" class="card-img-top card-img-custom" alt="Canotaje Amazónico">
+                    <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm fw-medium">Aventura</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span class="text-muted small fw-medium">Río Nanay</span>
                     </div>
-
+                    <h5 class="card-title font-outfit fw-semibold mb-2">Canotaje Amazónico</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Vive la adrenalina de remar a través de hermosos paisajes fluviales y rápidos seguros de la selva baja.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <div>
+                            <span class="text-warning fw-semibold">
+                                <i class="bi bi-star-fill"></i> 4.6
+                            </span>
+                            <span class="text-muted small">(15 opiniones)</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted block d-block">Por persona</small>
+                            <span class="fs-5 fw-bold text-success">S/140</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="card-footer bg-white border-0">
-                    <button class="btn btn-success w-100">
-                        Ver Detalle
-                    </button>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="detalleCanotaje.html" class="btn btn-success w-100 rounded-pill py-2.5 fw-medium">
+                        Ver Detalle <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
 
         <!-- Experiencia 5 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-
-                <img src="caminata.jpg"
-                     class="card-img-top">
-
-                <div class="card-body">
-
-                    <h5>Caminata en la Amazonía</h5>
-
-                    <p class="text-muted">
-                        Bosque Tropical
-                    </p>
-
-                    <p>
-                        Recorrido guiado por senderos de conservación.
-                    </p>
-
-                    <div class="d-flex justify-content-between">
-
-                        <span class="text-warning">
-                            ★ 4.8
-                        </span>
-
-                        <strong>S/90</strong>
-
+        <div class="col-md-6 col-lg-4 experience-card" data-category="selva">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                <div class="position-relative">
+                    <img src="caminata.jpg" class="card-img-top card-img-custom" alt="Caminata en la Amazonía">
+                    <span class="badge bg-success position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm">Selva</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span class="text-muted small fw-medium">Bosque Tropical</span>
                     </div>
-
+                    <h5 class="card-title font-outfit fw-semibold mb-2">Caminata en la Amazonía</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Camina por senderos ocultos de conservación, avista árboles milenarios y aprende técnicas de supervivencia.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <div>
+                            <span class="text-warning fw-semibold">
+                                <i class="bi bi-star-fill"></i> 4.8
+                            </span>
+                            <span class="text-muted small">(18 opiniones)</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted block d-block">Por persona</small>
+                            <span class="fs-5 fw-bold text-success">S/90</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="card-footer bg-white border-0">
-                    <button class="btn btn-success w-100">
-                        Ver Detalle
-                    </button>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="detalleCaminata.html" class="btn btn-success w-100 rounded-pill py-2.5 fw-medium">
+                        Ver Detalle <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
 
         <!-- Experiencia 6 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-
-                <img src="Pesca_Loreto.jpg"
-                     class="card-img-top">
-
-                <div class="card-body">
-
-                    <h5>Pesca Artesanal</h5>
-
-                    <p class="text-muted">
-                        Comunidad Ribereña
-                    </p>
-
-                    <p>
-                        Aprende técnicas tradicionales junto a pobladores.
-                    </p>
-
-                    <div class="d-flex justify-content-between">
-
-                        <span class="text-warning">
-                            ★ 4.9
-                        </span>
-
-                        <strong>S/130</strong>
-
+        <div class="col-md-6 col-lg-4 experience-card" data-category="cultura">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
+                <div class="position-relative">
+                    <img src="Pesca_Loreto.jpg" class="card-img-top card-img-custom" alt="Pesca Artesanal">
+                    <span class="badge bg-primary position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm">Cultura</span>
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span class="text-muted small fw-medium">Comunidad Ribereña</span>
                     </div>
-
+                    <h5 class="card-title font-outfit fw-semibold mb-2">Pesca Artesanal</h5>
+                    <p class="card-text text-muted flex-grow-1">
+                        Aprende las artes de pesca tradicionales y captura pirañas y otras especies locales con pescadores nativos.
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                        <div>
+                            <span class="text-warning fw-semibold">
+                                <i class="bi bi-star-fill"></i> 4.9
+                            </span>
+                            <span class="text-muted small">(32 opiniones)</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted block d-block">Por persona</small>
+                            <span class="fs-5 fw-bold text-success">S/130</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="card-footer bg-white border-0">
-                    <button class="btn btn-success w-100">
-                        Ver Detalle
-                    </button>
+                <div class="card-footer bg-white border-0 p-4 pt-0">
+                    <a href="detallePesca.html" class="btn btn-success w-100 rounded-pill py-2.5 fw-medium">
+                        Ver Detalle <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
                 </div>
-
             </div>
         </div>
 
     </div>
 
+    <!-- Mensaje de no resultados -->
+    <div id="no-results" class="text-center py-5 d-none">
+        <i class="bi bi-emoji-frown display-1 text-muted"></i>
+        <h4 class="mt-3 font-outfit fw-semibold">No se encontraron experiencias</h4>
+        <p class="text-muted">Prueba cambiando tu búsqueda o seleccionando otra categoría.</p>
+    </div>
 </section>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container text-center">
+        <img src="logo.png" alt="SelvaConecta" class="logo mb-3 filter-white" style="height: 40px; width: auto;">
+        <p class="mb-0 text-white-50">&copy; 2026 SelvaConecta. Viajes sostenibles con guías locales calificados. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('search-input');
+        const categorySelect = document.getElementById('category-select');
+        const cards = document.querySelectorAll('.experience-card');
+        const noResults = document.getElementById('no-results');
+
+        function filterExperiences() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categorySelect.value;
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-text').textContent.toLowerCase();
+                const location = card.querySelector('.text-muted').textContent.toLowerCase();
+                const cardCategory = card.getAttribute('data-category');
+
+                const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm) || location.includes(searchTerm);
+                const matchesCategory = selectedCategory === 'todas' || cardCategory === selectedCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    card.style.display = 'block';
+                    // Trigger a smooth fade-in animation
+                    card.classList.add('fade-in');
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                    card.classList.remove('fade-in');
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.classList.remove('d-none');
+            } else {
+                noResults.classList.add('d-none');
+            }
+        }
+
+        searchInput.addEventListener('input', filterExperiences);
+        categorySelect.addEventListener('change', filterExperiences);
+
+        // Smooth scroll for explore button
+        const exploreBtn = document.getElementById('btn-explorar');
+        if (exploreBtn) {
+            exploreBtn.addEventListener('click', () => {
+                document.getElementById('experiencias').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
+
