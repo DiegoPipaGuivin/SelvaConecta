@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar mi Comunidad - SelvaConecta</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+<!-- Navbar Minimal -->
+<nav class="navbar bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <img src="logo.png" alt="SelvaConecta" class="logo">
+            <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
+        </a>
+        <a href="index.html" class="btn btn-outline-success rounded-pill px-4">
+            <i class="bi bi-x-lg me-2"></i>Salir
+        </a>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-white p-5 rounded-4 shadow-sm border mb-4">
+                
+                <h2 class="text-center font-outfit fw-bold text-success mb-2">Registra tu Comunidad u Operación</h2>
+                <p class="text-center text-muted mb-5">Únete a SelvaConecta para ofrecer experiencias de turismo vivencial y conectar con clientes verificados.</p>
+
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-indicator-progress" id="step-progress-bar"></div>
+                    <div class="step-dot active" id="dot-1">
+                        1
+                        <span class="step-label">Identidad</span>
+                    </div>
+                    <div class="step-dot" id="dot-2">
+                        2
+                        <span class="step-label">Experiencia</span>
+                    </div>
+                    <div class="step-dot" id="dot-3">
+                        3
+                        <span class="step-label">Sostenibilidad</span>
+                    </div>
+                    <div class="step-dot" id="dot-4">
+                        4
+                        <span class="step-label">Pago</span>
+                    </div>
+                </div>
+
+                <!-- FORM WIZARD -->
+                <form id="operator-wizard-form" novalidate>
+                    
+                    <!-- STEP 1: IDENTIDAD Y SEGURIDAD -->
+                    <div class="wizard-step active" id="step-1">
+                        <div class="mb-4">
+                            <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="bi bi-shield-check text-success me-2"></i>Paso 1: Datos de Identidad y Seguridad
+                            </h4>
+                            <p class="text-muted small">Prometemos respaldar tus datos y conectar únicamente con clientes verificados. Necesitamos validar tu identidad primero.</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="op-razon-social" class="form-label fw-semibold text-muted small">NOMBRE DE LA COMUNIDAD O RAZÓN SOCIAL</label>
+                            <input type="text" class="form-control booking-input" id="op-razon-social" required placeholder="Ej. Comunidad Nativa Kukama de San José">
+                            <div class="invalid-feedback">Por favor, ingrese el nombre de la comunidad o razón social.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="op-representante" class="form-label fw-semibold text-muted small">NOMBRE DEL REPRESENTANTE / LÍDER</label>
+                            <input type="text" class="form-control booking-input" id="op-representante" required placeholder="Nombre completo del representante legal o curaca">
+                            <div class="invalid-feedback">Por favor, ingrese el nombre del representante.</div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="op-dni" class="form-label fw-semibold text-muted small">DNI / PASAPORTE DEL REPRESENTANTE</label>
+                                <input type="text" class="form-control booking-input" id="op-dni" required placeholder="Número de documento de identidad" pattern="^[0-9A-Za-z]{8,15}$">
+                                <div class="invalid-feedback">Ingrese un documento de identidad válido (mínimo 8 caracteres).</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="op-phone" class="form-label fw-semibold text-muted small">TELÉFONO / WHATSAPP DE CONTACTO</label>
+                                <input type="tel" class="form-control booking-input" id="op-phone" required placeholder="Ej. +51 987654321" pattern="^[0-9+ \-]{9,15}$">
+                                <div class="invalid-feedback">Ingrese un número de contacto válido.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="op-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO DE CONTACTO</label>
+                            <input type="email" class="form-control booking-input" id="op-email" required placeholder="contacto@comunidad.pe">
+                            <div class="invalid-feedback">Ingrese un correo electrónico válido.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="op-ubicacion" class="form-label fw-semibold text-muted small">UBICACIÓN PRINCIPAL</label>
+                            <select class="form-select booking-input" id="op-ubicacion" required>
+                                <option value="" disabled selected>Seleccione la ubicación de su comunidad...</option>
+                                <option value="Iquitos">Iquitos, Loreto</option>
+                                <option value="Tarapoto">Tarapoto, San Martín</option>
+                                <option value="Puerto Maldonado">Puerto Maldonado, Madre de Dios</option>
+                                <option value="Amazonas">Amazonas (Chachapoyas / Condorcanqui)</option>
+                                <option value="Otro">Otro (Especificar en descripción)</option>
+                            </select>
+                            <div class="invalid-feedback">Por favor, seleccione una ubicación.</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: DETALLES DE LA EXPERIENCIA -->
+                    <div class="wizard-step" id="step-2">
+                        <div class="mb-4">
+                            <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="bi bi-compass text-success me-2"></i>Paso 2: Detalles de la Experiencia (Producto)
+                            </h4>
+                            <p class="text-muted small">Crea el producto que alimentará dinámicamente nuestra plataforma. Esta información será mostrada a los turistas.</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="exp-title" class="form-label fw-semibold text-muted small">TÍTULO DEL TOUR O HOSPEDAJE</label>
+                            <input type="text" class="form-control booking-input" id="exp-title" required placeholder="Ej. Convivencia Cultural y Pesca Artesanal Kukama">
+                            <div class="invalid-feedback">Por favor, asigne un título atractivo a la experiencia.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="exp-desc" class="form-label fw-semibold text-muted small">DESCRIPCIÓN GENERAL</label>
+                            <textarea class="form-control booking-input" id="exp-desc" rows="4" required placeholder="Describa detalladamente el itinerario, las actividades que realizarán y lo que los turistas aprenderán..." maxlength="800" oninput="document.getElementById('desc-counter').textContent=this.value.length"></textarea>
+                            <div class="d-flex justify-content-between">
+                                <div class="invalid-feedback">Por favor, agregue una descripción de la experiencia.</div>
+                                <small class="text-muted mt-1"><span id="desc-counter">0</span>/800 caracteres</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small d-block">¿QUÉ INCLUYE ESTA EXPERIENCIA?</label>
+                            <div class="row g-2">
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Alimentación" id="inc-alimentacion" checked>
+                                        <label class="form-check-label text-muted small" for="inc-alimentacion">Alimentación</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Transporte" id="inc-transporte" checked>
+                                        <label class="form-check-label text-muted small" for="inc-transporte">Transporte</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Guiado local" id="inc-guiado" checked>
+                                        <label class="form-check-label text-muted small" for="inc-guiado">Guiado local</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Equipamiento" id="inc-equipamiento">
+                                        <label class="form-check-label text-muted small" for="inc-equipamiento">Equipamiento</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="exp-capacity" class="form-label fw-semibold text-muted small">CAPACIDAD MÁX. PERSONAS</label>
+                                <input type="number" class="form-control booking-input" id="exp-capacity" min="1" max="50" required value="10">
+                                <div class="invalid-feedback">Ingrese la capacidad máxima.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="exp-price-adult" class="form-label fw-semibold text-muted small">PRECIO POR ADULTO (S/)</label>
+                                <input type="number" class="form-control booking-input" id="exp-price-adult" min="1" required placeholder="150">
+                                <div class="invalid-feedback">Ingrese un precio válido.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="exp-price-child" class="form-label fw-semibold text-muted small">PRECIO POR NIÑO (S/)</label>
+                                <input type="number" class="form-control booking-input" id="exp-price-child" min="0" required placeholder="105">
+                                <div class="invalid-feedback">Ingrese un precio válido para niños.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small">SUBIR FOTOS DE LA SELVA O COMUNIDAD</label>
+                            <div class="drag-drop-zone" id="photo-drag-zone">
+                                <i class="bi bi-cloud-arrow-up drag-drop-icon"></i>
+                                <h6 class="fw-bold mb-1">Arrastra aquí tus fotos o haz clic para buscar</h6>
+                                <p class="text-muted small mb-0">Formatos permitidos: JPG, PNG. Máximo 5MB por foto.</p>
+                                <input type="file" id="photo-file-input" class="d-none" multiple accept="image/*">
+                            </div>
+                            <div class="preview-images-container" id="photo-previews">
+                                <!-- Previews appear here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: SOSTENIBILIDAD Y SEGURIDAD -->
+                    <div class="wizard-step" id="step-3">
+                        <div class="mb-4">
+                            <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="bi bi-tree text-success me-2"></i>Paso 3: Sostenibilidad y Seguridad (Factor Diferencial)
+                            </h4>
+                            <p class="text-muted small">SelvaConecta promueve un turismo responsable que proteja la biodiversidad y apoye a las comunidades nativas. Responde estas preguntas para iniciar tu proceso de auditoría.</p>
+                        </div>
+
+                        <div class="mb-4 bg-light p-3 rounded-3 border border-success-subtle">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-info-circle-fill text-success fs-5"></i>
+                                <div class="small text-muted">
+                                    <strong class="text-success">Certificación de Sostenibilidad:</strong> El equipo de SelvaConecta realizará una auditoría rápida guiada basándose en estas respuestas. De cumplir los criterios, se le otorgará el <strong>Sello de Sostenibilidad</strong> antes de que su publicación sea visible al público general.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small d-block">MEDIDAS DE SEGURIDAD</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="sust-chalecos" required>
+                                <label class="form-check-label text-muted small" for="sust-chalecos">
+                                    ¿Cuenta con chalecos salvavidas certificados de uso obligatorio si su experiencia incluye transporte fluvial o actividades acuáticas? *
+                                </label>
+                                <div class="invalid-feedback">Debe comprometerse con las medidas básicas de seguridad.</div>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="sust-guias" required>
+                                <label class="form-check-label text-muted small" for="sust-guias">
+                                    ¿Los guías locales a cargo son pobladores nativos de la comunidad y cuentan con experiencia / certificación? *
+                                </label>
+                                <div class="invalid-feedback">Es indispensable el uso de guías locales de la comunidad.</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="sust-auxilios">
+                                <label class="form-check-label text-muted small" for="sust-auxilios">
+                                    ¿Cuentan con un botiquín de primeros auxilios y conocimientos de rescate básico?
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sust-impact" class="form-label fw-semibold text-muted small">IMPACTO EN LA COMUNIDAD</label>
+                            <select class="form-select booking-input" id="sust-impact" required>
+                                <option value="" disabled selected>Seleccione cómo impactan los ingresos...</option>
+                                <option value="Directo">El 100% de los ingresos va directamente a las familias de la comunidad.</option>
+                                <option value="Fondo">Una parte de los ingresos alimenta un fondo comunal de salud/educación.</option>
+                                <option value="Cooperativa">Operamos como una cooperativa comunitaria con distribución equitativa.</option>
+                            </select>
+                            <div class="invalid-feedback">Por favor, elija el modelo de impacto económico de su comunidad.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sust-notes" class="form-label fw-semibold text-muted small">¿CÓMO CONTRIBUYE SU EXPERIENCIA A LA CONSERVACIÓN DE LA SELVA? (OPCIONAL)</label>
+                            <textarea class="form-control booking-input" id="sust-notes" rows="3" placeholder="Ej. Protegemos 10 hectáreas de bosque primario, evitamos la tala, educamos sobre fauna local, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: DATOS DE PAGO -->
+                    <div class="wizard-step" id="step-4">
+                        <div class="mb-4">
+                            <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="bi bi-wallet2 text-success me-2"></i>Paso 4: Datos de Pago (Finanzas)
+                            </h4>
+                            <p class="text-muted small">Prometemos un sistema de liquidación de pagos directo y seguro. Los pagos recibidos de los turistas se transferirán a su cuenta o billetera digital seleccionada.</p>
+                        </div>
+
+                        <!-- Live summary before payment -->
+                        <div class="alert alert-success-subtle border border-success-subtle rounded-3 p-3 mb-4 small">
+                            <div class="fw-semibold text-success mb-2"><i class="bi bi-clipboard-check me-1"></i>Resumen de tu registro</div>
+                            <div class="text-muted"><strong class="text-dark">Comunidad:</strong> <span id="preview-community">—</span></div>
+                            <div class="text-muted"><strong class="text-dark">Experiencia:</strong> <span id="preview-tour">—</span></div>
+                            <div class="text-muted"><strong class="text-dark">Precio adulto:</strong> <span id="preview-price">—</span></div>
+                            <div class="text-muted"><strong class="text-dark">Ubicación:</strong> <span id="preview-location">—</span></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-muted small d-block mb-2">MÉTODO DE LIQUIDACIÓN PREFERIDO</label>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <input type="radio" class="btn-check" name="payment-method" id="pay-bank" value="bank" checked>
+                                    <label class="btn btn-outline-success w-100 py-3 rounded-3" for="pay-bank">
+                                        <i class="bi bi-bank fs-4 d-block mb-1"></i>
+                                        Cuenta Bancaria / CCI
+                                    </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="radio" class="btn-check" name="payment-method" id="pay-digital" value="digital">
+                                    <label class="btn btn-outline-success w-100 py-3 rounded-3" for="pay-digital">
+                                        <i class="bi bi-phone fs-4 d-block mb-1"></i>
+                                        Billetera Digital (Yape / Plin)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BANK ACCOUNT SEC -->
+                        <div id="payment-bank-fields">
+                            <div class="mb-3">
+                                <label for="bank-name" class="form-label fw-semibold text-muted small">BANCO LOCAL</label>
+                                <select class="form-select booking-input" id="bank-name">
+                                    <option value="" disabled selected>Seleccione el banco...</option>
+                                    <option value="BCP">Banco de Crédito del Perú (BCP)</option>
+                                    <option value="BBVA">BBVA Perú</option>
+                                    <option value="Interbank">Interbank</option>
+                                    <option value="Banco de la Nación">Banco de la Nación</option>
+                                    <option value="Caja Arequipa">Caja Arequipa / Caja Piura</option>
+                                </select>
+                                <div class="invalid-feedback">Por favor, seleccione un banco.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="bank-account" class="form-label fw-semibold text-muted small">NÚMERO DE CUENTA / CCI (CÓDIGO DE CUENTA INTERBANCARIO)</label>
+                                <input type="text" class="form-control booking-input" id="bank-account" placeholder="Ingrese el número de cuenta o CCI de 20 dígitos">
+                                <div class="invalid-feedback">Ingrese un número de cuenta válido.</div>
+                            </div>
+                        </div>
+
+                        <!-- DIGITAL WALLET SEC -->
+                        <div id="payment-digital-fields" class="d-none">
+                            <div class="mb-3">
+                                <label for="wallet-type" class="form-label fw-semibold text-muted small">BILLETERA DIGITAL</label>
+                                <select class="form-select booking-input" id="wallet-type">
+                                    <option value="Yape" selected>Yape</option>
+                                    <option value="Plin">Plin</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="wallet-phone" class="form-label fw-semibold text-muted small">NÚMERO TELEFÓNICO ASOCIADO</label>
+                                <input type="tel" class="form-control booking-input" id="wallet-phone" placeholder="987654321" pattern="^[9][0-9]{8}$">
+                                <div class="invalid-feedback">Ingrese un número de celular de 9 dígitos que inicie con 9.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bank-owner" class="form-label fw-semibold text-muted small">TITULAR DE LA CUENTA O BILLETERA</label>
+                            <input type="text" class="form-control booking-input" id="bank-owner" placeholder="Nombre completo del titular de la cuenta">
+                            <div class="invalid-feedback">Ingrese el titular del medio de pago.</div>
+                        </div>
+                    </div>
+
+                    <!-- NAVIGATION CONTROLS -->
+                    <div class="d-flex justify-content-between border-top pt-4 mt-5" id="wizard-navigation">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 d-none" id="btn-prev-step">
+                            <i class="bi bi-arrow-left me-2"></i>Anterior
+                        </button>
+                        <button type="button" class="btn btn-success rounded-pill px-5 fw-bold ms-auto" id="btn-next-step">
+                            Siguiente <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+
+                </form>
+
+                <!-- SUCCESS VIEW -->
+                <div class="text-center py-5 d-none" id="wizard-success-view">
+                    <div class="success-icon-wrapper bg-success-subtle text-success p-3 rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 80px; height: 80px;">
+                        <i class="bi bi-patch-check-fill fs-1 text-success"></i>
+                    </div>
+                    <h3 class="font-outfit fw-bold text-success mb-2">¡Registro Recibido con Éxito!</h3>
+                    <p class="text-muted mb-4">Tu comunidad y experiencia han sido guardadas. Se ha iniciado el proceso guiado de auditoría de sostenibilidad.</p>
+                    
+                    <div class="bg-light p-4 rounded-4 border text-start mb-5 mx-auto" style="max-width: 550px;">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                            <h5 class="font-outfit fw-bold mb-0 text-success" id="success-community-name">Comunidad</h5>
+                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>En Auditoría</span>
+                        </div>
+                        <div class="mb-2 text-muted small"><strong>Representante:</strong> <span class="text-dark" id="success-rep-name">Representante</span></div>
+                        <div class="mb-2 text-muted small"><strong>Ubicación:</strong> <span class="text-dark" id="success-loc">Iquitos</span></div>
+                        <div class="mb-2 text-muted small"><strong>Experiencia Creada:</strong> <span class="text-dark fw-semibold" id="success-title">Título del tour</span></div>
+                        <div class="mb-2 text-muted small"><strong>Precios:</strong> <span class="text-dark" id="success-prices">S/150 Adulto | S/100 Niño</span></div>
+                        <div class="mb-2 text-muted small"><strong>Medio de Pago:</strong> <span class="text-dark" id="success-pay">CCI BCP</span></div>
+                        <div class="d-flex align-items-center gap-2 mt-3 p-2 bg-success-subtle text-success rounded-3 border border-success-subtle">
+                            <i class="bi bi-patch-check-fill fs-5"></i>
+                            <span class="small fw-semibold">Sello de Sostenibilidad asignado tras aprobación telefónica/WhatsApp.</span>
+                        </div>
+                    </div>
+
+                    <p class="text-muted small mb-4">El equipo de SelvaConecta se comunicará con el representante vía WhatsApp en las próximas 24 horas para completar la auditoría rápida y publicar tu experiencia.</p>
+                    
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="https://wa.me/51987654321?text=Hola!%20Acabo%20de%20registrar%20mi%20comunidad%20en%20SelvaConecta%20y%20quisiera%20coordinar%20la%20auditoría." target="_blank" class="btn btn-success rounded-pill px-5 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-whatsapp me-2"></i>Coordinar por WhatsApp
+                        </a>
+                        <a href="index.html" class="btn btn-outline-success rounded-pill px-5 py-2 fw-bold">
+                            <i class="bi bi-house-door me-2"></i>Volver al Inicio
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5">
+    <div class="container text-center">
+        <img src="logo.png" alt="SelvaConecta" class="logo mb-3 filter-white" style="height: 40px; width: auto;">
+        <p class="mb-0 text-white-50">&copy; 2026 SelvaConecta. Viajes sostenibles con guías locales calificados. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentStep = 1;
+        const totalSteps = 4;
+        
+        const btnPrev = document.getElementById('btn-prev-step');
+        const btnNext = document.getElementById('btn-next-step');
+        const wizardForm = document.getElementById('operator-wizard-form');
+        const successView = document.getElementById('wizard-success-view');
+        
+        // Payment configuration toggles
+        const payBank = document.getElementById('pay-bank');
+        const payDigital = document.getElementById('pay-digital');
+        const bankFields = document.getElementById('payment-bank-fields');
+        const digitalFields = document.getElementById('payment-digital-fields');
+        
+        const bankName = document.getElementById('bank-name');
+        const bankAccount = document.getElementById('bank-account');
+        const walletType = document.getElementById('wallet-type');
+        const walletPhone = document.getElementById('wallet-phone');
+        const bankOwner = document.getElementById('bank-owner');
+
+        if (payBank && payDigital && bankFields && digitalFields) {
+            payBank.addEventListener('change', () => {
+                bankFields.classList.remove('d-none');
+                digitalFields.classList.add('d-none');
+                
+                // Toggle required fields
+                bankName.required = true;
+                bankAccount.required = true;
+                walletPhone.required = false;
+            });
+            payDigital.addEventListener('change', () => {
+                bankFields.classList.add('d-none');
+                digitalFields.classList.remove('d-none');
+                
+                // Toggle required fields
+                bankName.required = false;
+                bankAccount.required = false;
+                walletPhone.required = true;
+            });
+        }
+        
+        // Initial payment required state
+        if (bankName && bankAccount) {
+            bankName.required = true;
+            bankAccount.required = true;
+        }
+
+        // Photo Upload simulation
+        const dragZone = document.getElementById('photo-drag-zone');
+        const fileInput = document.getElementById('photo-file-input');
+        const previewsContainer = document.getElementById('photo-previews');
+        
+        if (dragZone && fileInput && previewsContainer) {
+            dragZone.addEventListener('click', () => fileInput.click());
+            
+            // Drag and drop events
+            dragZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragZone.style.borderColor = 'var(--primary)';
+                dragZone.style.backgroundColor = 'rgba(10, 92, 54, 0.08)';
+            });
+            
+            dragZone.addEventListener('dragleave', () => {
+                dragZone.style.borderColor = 'rgba(10, 92, 54, 0.3)';
+                dragZone.style.backgroundColor = 'var(--primary-light)';
+            });
+            
+            dragZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragZone.style.borderColor = 'rgba(10, 92, 54, 0.3)';
+                dragZone.style.backgroundColor = 'var(--primary-light)';
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+            
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) {
+                    handleFiles(fileInput.files);
+                }
+            });
+        }
+
+        function handleFiles(files) {
+            previewsContainer.innerHTML = '';
+            Array.from(files).slice(0, 3).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('uploaded-preview-img');
+                        previewsContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Wizard navigation logic
+        if (btnNext && btnPrev) {
+            btnNext.addEventListener('click', () => {
+                if (validateStep(currentStep)) {
+                    if (currentStep < totalSteps) {
+                        currentStep++;
+                        showStep(currentStep);
+                    } else {
+                        // Submit form / Finish
+                        finishWizard();
+                    }
+                }
+            });
+
+            btnPrev.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${step}`).classList.add('active');
+
+            // Update step indicator progress line
+            const progressBar = document.getElementById('step-progress-bar');
+            const percent = ((step - 1) / (totalSteps - 1)) * 100;
+            progressBar.style.width = `${percent}%`;
+
+            // Update step dots
+            for (let i = 1; i <= totalSteps; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i < step) {
+                    dot.classList.add('completed');
+                    dot.classList.remove('active');
+                } else if (i === step) {
+                    dot.classList.add('active');
+                    dot.classList.remove('completed');
+                } else {
+                    dot.classList.remove('active', 'completed');
+                }
+            }
+
+            // Show/Hide Previous Button
+            if (step === 1) {
+                btnPrev.classList.add('d-none');
+            } else {
+                btnPrev.classList.remove('d-none');
+            }
+
+            // Change Next Button Text on last step
+            if (step === totalSteps) {
+                btnNext.innerHTML = 'Confirmar Registro <i class="bi bi-check-lg ms-2"></i>';
+            } else {
+                btnNext.innerHTML = 'Siguiente <i class="bi bi-arrow-right ms-2"></i>';
+            }
+
+            // Scroll to wizard top
+            document.querySelector('.step-indicator').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function validateStep(step) {
+            const stepContainer = document.getElementById(`step-${step}`);
+            const inputs = stepContainer.querySelectorAll('input[required], select[required], textarea[required]');
+            let stepValid = true;
+
+            inputs.forEach(input => {
+                input.classList.remove('is-invalid');
+                let valid = input.checkValidity();
+                
+                // Custom checkbox check in Step 3
+                if (input.type === 'checkbox' && !input.checked) {
+                    valid = false;
+                }
+
+                if (!valid) {
+                    input.classList.add('is-invalid');
+                    stepValid = false;
+                }
+            });
+
+            return stepValid;
+        }
+
+        function finishWizard() {
+            // Read details
+            const communityName = document.getElementById('op-razon-social').value;
+            const repName = document.getElementById('op-representante').value;
+            const location = document.getElementById('op-ubicacion').value;
+            const tourTitle = document.getElementById('exp-title').value;
+            const priceAdult = document.getElementById('exp-price-adult').value;
+            const priceChild = document.getElementById('exp-price-child').value;
+            
+            let paymentStr = '';
+            if (payBank.checked) {
+                paymentStr = `Depósito CCI ${bankName.value} (Titular: ${bankOwner.value})`;
+            } else {
+                paymentStr = `${walletType.value} a celular ${walletPhone.value} (Titular: ${bankOwner.value})`;
+            }
+
+            // Set success UI fields
+            document.getElementById('success-community-name').textContent = communityName;
+            document.getElementById('success-rep-name').textContent = repName;
+            document.getElementById('success-loc').textContent = location;
+            document.getElementById('success-title').textContent = tourTitle;
+            document.getElementById('success-prices').textContent = `S/${priceAdult} Adulto | S/${priceChild} Niño`;
+            document.getElementById('success-pay').textContent = paymentStr;
+
+            // Hide form and navigation controls
+            wizardForm.classList.add('d-none');
+            document.getElementById('wizard-navigation').classList.add('d-none');
+            document.querySelector('.step-indicator').classList.add('d-none');
+            
+            // Show success view
+            successView.classList.remove('d-none');
+            
+            // Save state to local storage to simulate dynamic updates if wanted
+            const operatorProfile = {
+                communityName,
+                repName,
+                location,
+                tourTitle,
+                priceAdult,
+                priceChild,
+                paymentStr
+            };
+            localStorage.setItem('registeredOperator', JSON.stringify(operatorProfile));
+        }
+
+        // Initialize progress line
+        showStep(1);
+
+        // Live preview updater for step 4
+        function updatePreview() {
+            const community = document.getElementById('op-razon-social').value || '—';
+            const tour = document.getElementById('exp-title').value || '—';
+            const price = document.getElementById('exp-price-adult').value;
+            const location = document.getElementById('op-ubicacion').value || '—';
+
+            const pC = document.getElementById('preview-community');
+            const pT = document.getElementById('preview-tour');
+            const pP = document.getElementById('preview-price');
+            const pL = document.getElementById('preview-location');
+
+            if (pC) pC.textContent = community;
+            if (pT) pT.textContent = tour;
+            if (pP) pP.textContent = price ? `S/${price} por adulto` : '—';
+            if (pL) pL.textContent = location;
+        }
+
+        // Update preview whenever step 4 is shown
+        const origShowStep = showStep;
+        // Patch btnNext to update preview when going to step 4
+        btnNext.addEventListener('click', () => {
+            if (currentStep === 3) setTimeout(updatePreview, 50);
+        }, true);
+    });
+</script>
+</body>
+</html>

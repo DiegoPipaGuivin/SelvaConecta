@@ -4,6 +4,7 @@ const EXPERIENCES = {
         id: 'Ama',
         title: 'Tour en la Amazonía',
         price: 150,
+        capacity: 20,
         rating: 4.8,
         ratingsCount: 12,
         ratingDist: { 5: 10, 4: 1, 3: 1, 2: 0, 1: 0 },
@@ -16,6 +17,7 @@ const EXPERIENCES = {
         id: 'Yagu',
         title: 'Comunidad Nativa Yagua',
         price: 180,
+        capacity: 20,
         rating: 4.9,
         ratingsCount: 24,
         ratingDist: { 5: 22, 4: 2, 3: 0, 2: 0, 1: 0 },
@@ -28,6 +30,7 @@ const EXPERIENCES = {
         id: 'Fauna',
         title: 'Avistamiento de Fauna',
         price: 120,
+        capacity: 20,
         rating: 4.7,
         ratingsCount: 9,
         ratingDist: { 5: 7, 4: 1, 3: 1, 2: 0, 1: 0 },
@@ -40,6 +43,7 @@ const EXPERIENCES = {
         id: 'Canotaje',
         title: 'Canotaje Amazónico',
         price: 140,
+        capacity: 20,
         rating: 4.6,
         ratingsCount: 15,
         ratingDist: { 5: 11, 4: 3, 3: 1, 2: 0, 1: 0 },
@@ -47,23 +51,29 @@ const EXPERIENCES = {
             { name: 'Enrique Soto', rating: 5, text: 'Pura adrenalina y paisajes hermosos a lo largo del río Nanay. El equipamiento es de primera y los guías cuidan mucho la seguridad.', date: '11/06/2026' },
             { name: 'Lucía Valdivia', rating: 4, text: 'Muy entretenido. Remar en la selva te da una perspectiva completamente diferente del paisaje.', date: '05/06/2026' }
         ]
+        
     },
     'detalleCaminata.html': {
         id: 'Caminata',
         title: 'Caminata en la Amazonía',
         price: 90,
+        capacity: 20,
         rating: 4.8,
         ratingsCount: 18,
         ratingDist: { 5: 15, 4: 2, 3: 1, 2: 0, 1: 0 },
         defaultComments: [
             { name: 'Marcos Vega', rating: 5, text: 'Una caminata en bosque primario inolvidable. Aprendimos sobre árboles milenarios gigantes y técnicas de supervivencia básica.', date: '13/06/2026' },
             { name: 'Valeria Castro', rating: 4, text: 'Excelente recorrido. Recomiendo llevar repelente fuerte y buenas botas para el lodo.', date: '09/06/2026' }
+            
+            
         ]
+
     },
     'detallePesca.html': {
         id: 'Pesca',
         title: 'Pesca Artesanal',
         price: 130,
+        capacity: 20,
         rating: 4.9,
         ratingsCount: 32,
         ratingDist: { 5: 29, 4: 3, 3: 0, 2: 0, 1: 0 },
@@ -78,14 +88,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Determine current experience
     const pageName = window.location.pathname.split('/').pop() || 'detalleAma.html';
     const exp = EXPERIENCES[pageName] || EXPERIENCES['detalleAma.html'];
+    const reservas =
+JSON.parse(localStorage.getItem('sc_reservas')) || [];
+
+const reservasExp =
+reservas.filter(r =>
+    r.experiencia === exp.title
+);
+
+const cuposDisponibles = exp.capacity - reservasExp.length;
+    const cupos = document.getElementById('cupos-disponibles');
+    if (cupos) {
+        cupos.innerHTML = `Quedan ${cuposDisponibles} cupos`;
+    }
 
     // Load elements
     const adultInput = document.getElementById('booking-adults');
     const childInput = document.getElementById('booking-children');
     const dateInput = document.getElementById('booking-date');
-    const nameInput = document.getElementById('booking-name');
-    const emailInput = document.getElementById('booking-email');
-    const phoneInput = document.getElementById('booking-phone');
     
     const adultPriceEl = document.getElementById('adult-price-summary');
     const childPriceEl = document.getElementById('child-price-summary');
@@ -98,6 +118,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.min = today;
+        const fechasAgotadas = [
+
+'2026-07-10',
+'2026-07-15',
+'2026-07-20'
+
+];
+dateInput.addEventListener(
+'change',
+function(){
+
+    if(
+        fechasAgotadas.includes(
+            this.value
+        )
+    ){
+
+        alert(
+        'Fecha agotada'
+        );
+
+        this.value = '';
+
+    }
+
+});
     }
 
     // Dynamic pricing calculator
@@ -115,6 +161,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (adultPriceEl) adultPriceEl.textContent = `S/${adultTotal} (${adultsCount} × S/${exp.price})`;
         if (childPriceEl) childPriceEl.textContent = `S/${childTotal} (${childrenCount} × S/${childPrice})`;
         totalEl.textContent = `S/${total}`;
+        
+        return { total, adultsCount, childrenCount };
     }
 
     if (adultInput) adultInput.addEventListener('input', updatePricing);
@@ -123,7 +171,185 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial price calculation
     updatePricing();
 
-    // Form Validation and Booking Confirmation
+    // --- NAVBAR AUTH SYNC ---
+    function updateNavbarAuth() {
+        const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
+        const authBtn = document.getElementById('btn-auth-tourist');
+        const buttonsContainer = document.getElementById('navbar-buttons-container');
+        
+        if (!buttonsContainer) return;
+        
+        // Inject global auth modal if not exists
+        let globalAuthModal = document.getElementById('authModal');
+        if (!globalAuthModal) {
+            const modalHtml = `
+                <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 border-0 shadow-lg">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title font-outfit fw-bold text-success fs-4" id="authModalLabel">Ingresa a SelvaConecta</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="modal-tabs d-flex justify-content-start gap-2 mb-4">
+                                    <button type="button" class="modal-tab-btn active" id="tab-login">Iniciar Sesión</button>
+                                    <button type="button" class="modal-tab-btn" id="tab-register">Registrarse</button>
+                                </div>
+                                <form id="login-form">
+                                    <div class="mb-3">
+                                        <label for="login-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
+                                        <input type="email" class="form-control booking-input" id="login-email" placeholder="ejemplo@correo.com" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="login-password" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
+                                        <input type="password" class="form-control booking-input" id="login-password" placeholder="••••••" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Iniciar Sesión</button>
+                                </form>
+                                <form id="register-form" class="d-none">
+                                    <div class="mb-3">
+                                        <label for="reg-name" class="form-label fw-semibold text-muted small">NOMBRE COMPLETO</label>
+                                        <input type="text" class="form-control booking-input" id="reg-name" placeholder="Nombre completo" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="reg-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
+                                        <input type="email" class="form-control booking-input" id="reg-email" placeholder="ejemplo@correo.com" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="reg-phone" class="form-label fw-semibold text-muted small">TELÉFONO / WHATSAPP</label>
+                                        <input type="tel" class="form-control booking-input" id="reg-phone" placeholder="987654321" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="reg-password" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
+                                        <input type="password" class="form-control booking-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Crear Cuenta</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Tab Toggle
+            const tLog = document.getElementById('tab-login');
+            const tReg = document.getElementById('tab-register');
+            const fLog = document.getElementById('login-form');
+            const fReg = document.getElementById('register-form');
+            
+            tLog.addEventListener('click', () => {
+                tLog.classList.add('active');
+                tReg.classList.remove('active');
+                fLog.classList.remove('d-none');
+                fReg.classList.add('d-none');
+            });
+            
+            tReg.addEventListener('click', () => {
+                tReg.classList.add('active');
+                tLog.classList.remove('active');
+                fReg.classList.remove('d-none');
+                fLog.classList.add('d-none');
+            });
+            
+            // Form Submissions
+            fLog.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const name = email.split('@')[0];
+                const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+                
+                localStorage.setItem('touristLoggedIn', 'true');
+                localStorage.setItem('touristName', formattedName);
+                localStorage.setItem('touristEmail', email);
+                localStorage.setItem('touristPhone', '999888777');
+                
+                bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                fLog.reset();
+                updateNavbarAuth();
+            });
+            
+            fReg.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value;
+                const email = document.getElementById('reg-email').value;
+                const phone = document.getElementById('reg-phone').value;
+                
+                localStorage.setItem('touristLoggedIn', 'true');
+                localStorage.setItem('touristName', name);
+                localStorage.setItem('touristEmail', email);
+                localStorage.setItem('touristPhone', phone);
+                
+                bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                fReg.reset();
+                updateNavbarAuth();
+            });
+        }
+        
+        const oldUserContainer = document.getElementById('user-logged-in-container');
+        if (oldUserContainer) oldUserContainer.remove();
+        
+        if (isLoggedIn) {
+            if (authBtn) authBtn.style.display = 'none';
+            
+            const name = localStorage.getItem('touristName') || 'Turista';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            
+            const userContainerHtml = `
+<div class="d-flex align-items-center gap-2"
+id="user-logged-in-container">
+
+    <span class="user-avatar-nav">
+        ${initials}
+    </span>
+
+    <span class="text-success fw-semibold small">
+        Hola, ${name}
+    </span>
+
+    <a
+        href="perfil.html"
+        class="btn btn-sm btn-outline-success"
+    >
+        Mi Perfil
+    </a>
+
+    <button
+        class="btn btn-link text-danger text-decoration-none fw-semibold p-0 ms-2 small"
+        id="btn-logout-tourist"
+    >
+        Cerrar Sesión
+    </button>
+
+</div>
+`;
+            
+            const regOperatorBtn = document.getElementById('btn-reg-operator');
+            if (regOperatorBtn) {
+                regOperatorBtn.insertAdjacentHTML('beforebegin', userContainerHtml);
+            } else {
+                buttonsContainer.insertAdjacentHTML('beforeend', userContainerHtml);
+            }
+            
+            const logoutBtn = document.getElementById('btn-logout-tourist');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('touristLoggedIn');
+                    localStorage.removeItem('touristName');
+                    localStorage.removeItem('touristEmail');
+                    localStorage.removeItem('touristPhone');
+                    updateNavbarAuth();
+                });
+            }
+        } else {
+            if (authBtn) authBtn.style.display = 'inline-block';
+        }
+    }
+
+    // Initialize Navbar Auth state
+    updateNavbarAuth();
+
+    // --- FORM VALIDATION AND BOOKING REGISTRATION FLOW ---
     if (bookingForm) {
         bookingForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -148,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Travelers validation (must be at least 1 person in total, and at least 1 adult or child)
+            // Travelers validation
             const adults = parseInt(adultInput.value) || 0;
             const children = parseInt(childInput.value) || 0;
             if (adults + children <= 0) {
@@ -159,42 +385,499 @@ document.addEventListener('DOMContentLoaded', () => {
                 isValid = false;
             }
 
-            // Contact details validation
-            if (!nameInput.value.trim()) {
-                showError(nameInput, 'Ingrese su nombre completo.');
-                isValid = false;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailInput.value.trim() || !emailRegex.test(emailInput.value.trim())) {
-                showError(emailInput, 'Ingrese un correo electrónico válido.');
-                isValid = false;
-            }
-
-            const phoneRegex = /^[0-9+ \-]{9,15}$/;
-            if (!phoneInput.value.trim() || !phoneRegex.test(phoneInput.value.trim())) {
-                showError(phoneInput, 'Ingrese un número telefónico válido (mínimo 9 dígitos).');
-                isValid = false;
-            }
-
             if (isValid) {
-                // Generate Booking Reference Number
-                const bookingRef = 'SC-' + Math.floor(100000 + Math.random() * 900000);
+                const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
+                const pricingInfo = updatePricing();
                 
-                // Show Success View
-                bookingFields.classList.add('d-none');
-                bookingSuccess.classList.remove('d-none');
-                
-                document.getElementById('success-ref').textContent = bookingRef;
-                document.getElementById('success-date').textContent = dateInput.value;
-                document.getElementById('success-travelers').textContent = `${adults} Adulto(s) ${children > 0 ? ', ' + children + ' Niño(s)' : ''}`;
-                document.getElementById('success-total').textContent = totalEl.textContent;
-                document.getElementById('success-email').textContent = emailInput.value.trim();
-
-                // Auto scroll to success message
-                bookingSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                if (isLoggedIn) {
+                    // Open Quick Confirmation Modal
+                    openConfirmBookingModal(pricingInfo);
+                } else {
+                    // Open Tourist Auth/Registration Modal
+                    openTouristRegistrationModal(pricingInfo);
+                }
             }
         });
+    }
+
+    function openConfirmBookingModal(pricingInfo) {
+        let confirmModal = document.getElementById('confirmBookingModal');
+        if (!confirmModal) {
+            const modalHtml = `
+                <div class="modal fade" id="confirmBookingModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 border-0 shadow-lg">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title font-outfit fw-bold text-success fs-4">Confirmar Reserva</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <p class="text-muted">Por favor, confirma los detalles de tu reserva antes de enviarla al operador:</p>
+                                <div class="bg-light p-3 rounded-3 mb-4">
+                                    <div class="mb-2"><strong>Experiencia:</strong> <span class="text-dark fw-semibold" id="confirm-exp-title"></span></div>
+                                    <div class="mb-2"><strong>Fecha del Viaje:</strong> <span class="text-dark" id="confirm-exp-date"></span></div>
+                                    <div class="mb-2"><strong>Viajeros:</strong> <span class="text-dark" id="confirm-exp-travelers"></span></div>
+                                    <div class="mb-0"><strong>Total Estimado:</strong> <span class="text-success fw-bold fs-5" id="confirm-exp-total"></span></div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill w-50" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn btn-success rounded-pill w-50 fw-bold" id="btn-submit-confirm-booking">Confirmar Reserva</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            confirmModal = document.getElementById('confirmBookingModal');
+        }
+
+        // Set variables
+        document.getElementById('confirm-exp-title').textContent = exp.title;
+        document.getElementById('confirm-exp-date').textContent = dateInput.value;
+        document.getElementById('confirm-exp-travelers').textContent = `${pricingInfo.adultsCount} Adulto(s) ${pricingInfo.childrenCount > 0 ? ', ' + pricingInfo.childrenCount + ' Niño(s)' : ''}`;
+        document.getElementById('confirm-exp-total').textContent = `S/${pricingInfo.total}`;
+
+        const bootstrapModal = new bootstrap.Modal(confirmModal);
+        bootstrapModal.show();
+
+        const btnConfirmSubmit = document.getElementById('btn-submit-confirm-booking');
+        
+        // Remove existing listener to avoid stacking
+        const newBtnConfirmSubmit = btnConfirmSubmit.cloneNode(true);
+        btnConfirmSubmit.parentNode.replaceChild(newBtnConfirmSubmit, btnConfirmSubmit);
+
+        newBtnConfirmSubmit.addEventListener('click', () => {
+            bootstrapModal.hide();
+            openPaymentModal(pricingInfo);
+        });
+    }
+
+    function openTouristRegistrationModal(pricingInfo) {
+        let authModal = document.getElementById('detailAuthModal');
+        if (!authModal) {
+            const modalHtml = `
+                <div class="modal fade" id="detailAuthModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 border-0 shadow-lg">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title font-outfit fw-bold text-success fs-4">Iniciar Sesión o Registrarse</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="modal-tabs d-flex justify-content-start gap-2 mb-4">
+                                    <button type="button" class="modal-tab-btn active" id="modal-tab-reg">Registrarse</button>
+                                    <button type="button" class="modal-tab-btn" id="modal-tab-login">Iniciar Sesión</button>
+                                </div>
+                                
+                                <p class="text-muted small mb-4">Debes registrarte o iniciar sesión para completar tu reserva. Capturaremos tus datos para coordinar el viaje.</p>
+                                
+                                <!-- REGISTRATION FORM -->
+                                <form id="modal-reg-form">
+                                    <div class="mb-3">
+                                        <label for="m-reg-name" class="form-label fw-semibold text-muted small">NOMBRE COMPLETO</label>
+                                        <input type="text" class="form-control booking-input" id="m-reg-name" required placeholder="Nombre completo">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="m-reg-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
+                                        <input type="email" class="form-control booking-input" id="m-reg-email" required placeholder="ejemplo@correo.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="m-reg-phone" class="form-label fw-semibold text-muted small">TELÉFONO / WHATSAPP</label>
+                                        <input type="tel" class="form-control booking-input" id="m-reg-phone" required placeholder="987654321">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="m-reg-pass" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
+                                        <input type="password" class="form-control booking-input" id="m-reg-pass" required minlength="6" placeholder="Mínimo 6 caracteres">
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Crear Cuenta y Confirmar Reserva</button>
+                                </form>
+                                
+                                <!-- LOGIN FORM -->
+                                <form id="modal-login-form" class="d-none">
+                                    <div class="mb-3">
+                                        <label for="m-log-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
+                                        <input type="email" class="form-control booking-input" id="m-log-email" required placeholder="ejemplo@correo.com">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="m-log-pass" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
+                                        <input type="password" class="form-control booking-input" id="m-log-pass" required placeholder="••••••">
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Iniciar Sesión y Confirmar Reserva</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            authModal = document.getElementById('detailAuthModal');
+            
+            // Tab Toggle
+            const tabReg = document.getElementById('modal-tab-reg');
+            const tabLog = document.getElementById('modal-tab-login');
+            const regForm = document.getElementById('modal-reg-form');
+            const logForm = document.getElementById('modal-login-form');
+            
+            tabReg.addEventListener('click', () => {
+                tabReg.classList.add('active');
+                tabLog.classList.remove('active');
+                regForm.classList.remove('d-none');
+                logForm.classList.add('d-none');
+            });
+            
+            tabLog.addEventListener('click', () => {
+                tabLog.classList.add('active');
+                tabReg.classList.remove('active');
+                logForm.classList.remove('d-none');
+                regForm.classList.add('d-none');
+            });
+        }
+
+        const bootstrapModal = new bootstrap.Modal(authModal);
+        bootstrapModal.show();
+
+        const mRegForm = document.getElementById('modal-reg-form');
+        const mLogForm = document.getElementById('modal-login-form');
+
+        // Reset forms
+        mRegForm.reset();
+        mLogForm.reset();
+
+        // Remove old listeners by replacing forms
+        const newMRegForm = mRegForm.cloneNode(true);
+        mRegForm.parentNode.replaceChild(newMRegForm, mRegForm);
+        const newMLogForm = mLogForm.cloneNode(true);
+        mLogForm.parentNode.replaceChild(newMLogForm, mLogForm);
+
+        // Bind registration
+        newMRegForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('m-reg-name').value;
+            const email = document.getElementById('m-reg-email').value;
+            const phone = document.getElementById('m-reg-phone').value;
+            
+            localStorage.setItem('touristLoggedIn', 'true');
+            localStorage.setItem('touristName', name);
+            localStorage.setItem('touristEmail', email);
+            localStorage.setItem('touristPhone', phone);
+            
+            bootstrapModal.hide();
+            updateNavbarAuth();
+            openPaymentModal(pricingInfo);
+        });
+
+        // Bind login
+        newMLogForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('m-log-email').value;
+            const name = email.split('@')[0];
+            const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+            
+            localStorage.setItem('touristLoggedIn', 'true');
+            localStorage.setItem('touristName', formattedName);
+            localStorage.setItem('touristEmail', email);
+            localStorage.setItem('touristPhone', '999888777');
+            
+            bootstrapModal.hide();
+            updateNavbarAuth();
+            openPaymentModal(pricingInfo);
+        });
+    }
+
+
+    // --- PAYMENT MODAL ---
+    function openPaymentModal(pricingInfo) {
+        let payModal = document.getElementById('paymentModal');
+        if (!payModal) {
+            const modalHtml = `
+                <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content rounded-4 border-0 shadow-lg">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title font-outfit fw-bold text-success fs-4">
+                                    <i class="bi bi-lock-fill me-2"></i>Pago seguro
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+
+                                <div class="bg-light rounded-3 px-4 py-3 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <div class="text-muted small">
+                                        <strong class="text-dark" id="pay-exp-title"></strong><br>
+                                        <span id="pay-exp-date"></span> &bull; <span id="pay-exp-travelers"></span>
+                                    </div>
+                                    <div class="fs-4 fw-bold text-success" id="pay-exp-total"></div>
+                                </div>
+
+                                <p class="fw-semibold text-muted small mb-3">ELIGE TU MÉTODO DE PAGO</p>
+                                <div class="d-flex gap-3 mb-4 flex-wrap">
+                                    <button type="button" class="btn btn-outline-success rounded-pill px-4 fw-semibold" id="pay-tab-yape" data-method="yape">
+                                        <i class="bi bi-phone-fill me-1" style="color:#6D28D9;"></i>Yape
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold" id="pay-tab-card" data-method="tarjeta">
+                                        <i class="bi bi-credit-card me-1"></i>Tarjeta
+                                    </button>
+                                </div>
+
+                                <div id="pay-panel-yape" class="d-none">
+                                    <div class="text-center py-2">
+                                        <div class="bg-white border rounded-4 d-inline-block p-3 mb-3 shadow-sm">
+                                            <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="160" height="160" fill="white"/>
+                                                <rect x="10" y="10" width="50" height="50" fill="none" stroke="#6D28D9" stroke-width="4"/>
+                                                <rect x="20" y="20" width="30" height="30" fill="#6D28D9"/>
+                                                <rect x="100" y="10" width="50" height="50" fill="none" stroke="#6D28D9" stroke-width="4"/>
+                                                <rect x="110" y="20" width="30" height="30" fill="#6D28D9"/>
+                                                <rect x="10" y="100" width="50" height="50" fill="none" stroke="#6D28D9" stroke-width="4"/>
+                                                <rect x="20" y="110" width="30" height="30" fill="#6D28D9"/>
+                                                <rect x="70" y="10" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="70" y="30" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="80" y="70" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="100" y="70" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="120" y="70" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="70" y="80" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="70" y="100" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="90" y="100" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="110" y="110" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="80" y="120" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="100" y="130" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="120" y="120" width="10" height="10" fill="#6D28D9"/>
+                                                <rect x="62" y="62" width="36" height="36" rx="6" fill="#6D28D9"/>
+                                                <text x="80" y="86" text-anchor="middle" fill="white" font-size="20" font-weight="bold" font-family="Arial">Y</text>
+                                            </svg>
+                                        </div>
+                                        <div class="mb-1 fw-bold text-dark">SelvaConecta SAC</div>
+                                        <div class="text-muted small mb-1">Escanea con tu app Yape o yapea al número:</div>
+                                        <div class="fs-5 fw-bold mb-3" style="color:#6D28D9;">987 654 321</div>
+                                        <div class="alert alert-warning py-2 px-3 rounded-3 text-start small mb-4">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                            Tras yapear, ingresa el <strong>código de operación</strong> que aparece en tu app Yape.
+                                        </div>
+                                        <div class="mb-3 text-start">
+                                            <label class="form-label fw-semibold text-muted small">CÓDIGO DE OPERACIÓN</label>
+                                            <input type="text" id="yape-code" class="form-control booking-input" placeholder="Ej: 123456789" maxlength="12" inputmode="numeric">
+                                            <div id="yape-code-error" class="text-danger small mt-1" style="display:none;">Ingresa el código de operación Yape.</div>
+                                        </div>
+                                        <button type="button" class="btn w-100 py-3 rounded-pill fw-bold text-white" id="btn-pay-yape" style="background:#6D28D9;border:none;">
+                                            <i class="bi bi-check-circle-fill me-2"></i>Confirmar pago con Yape
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="pay-panel-card" class="d-none">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold text-muted small">NÚMERO DE TARJETA</label>
+                                        <div class="position-relative">
+                                            <input type="text" id="card-number" class="form-control booking-input pe-5" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric">
+                                            <span class="position-absolute top-50 end-0 translate-middle-y me-3" id="card-brand-icon">
+                                                <i class="bi bi-credit-card text-muted fs-5"></i>
+                                            </span>
+                                        </div>
+                                        <div id="card-number-error" class="text-danger small mt-1" style="display:none;"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold text-muted small">NOMBRE EN LA TARJETA</label>
+                                        <input type="text" id="card-name" class="form-control booking-input" placeholder="Como aparece en tu tarjeta" autocomplete="cc-name">
+                                        <div id="card-name-error" class="text-danger small mt-1" style="display:none;"></div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-6">
+                                            <label class="form-label fw-semibold text-muted small">VENCIMIENTO</label>
+                                            <input type="text" id="card-expiry" class="form-control booking-input" placeholder="MM/AA" maxlength="5" inputmode="numeric">
+                                            <div id="card-expiry-error" class="text-danger small mt-1" style="display:none;"></div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label fw-semibold text-muted small d-flex align-items-center gap-1">
+                                                CVV
+                                                <span data-bs-toggle="tooltip" title="Los 3 dígitos al dorso de tu tarjeta (4 en Amex)">
+                                                    <i class="bi bi-question-circle text-muted"></i>
+                                                </span>
+                                            </label>
+                                            <input type="password" id="card-cvv" class="form-control booking-input" placeholder="•••" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
+                                            <div id="card-cvv-error" class="text-danger small mt-1" style="display:none;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 text-muted small mb-4">
+                                        <i class="bi bi-shield-lock-fill text-success fs-5"></i>
+                                        Datos cifrados con SSL 256 bits. No almacenamos tu tarjeta.
+                                    </div>
+                                    <button type="button" class="btn btn-success w-100 py-3 rounded-pill fw-bold" id="btn-pay-card">
+                                        <i class="bi bi-lock-fill me-2"></i>Pagar <span id="btn-pay-card-amount"></span>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            payModal = document.getElementById('paymentModal');
+
+            // Tab switching
+            function activateTab(method) {
+                const isYape = method === 'yape';
+                document.getElementById('pay-tab-yape').className = isYape
+                    ? 'btn btn-outline-success rounded-pill px-4 fw-semibold'
+                    : 'btn btn-outline-secondary rounded-pill px-4 fw-semibold';
+                document.getElementById('pay-tab-card').className = !isYape
+                    ? 'btn btn-outline-success rounded-pill px-4 fw-semibold'
+                    : 'btn btn-outline-secondary rounded-pill px-4 fw-semibold';
+                document.getElementById('pay-panel-yape').classList.toggle('d-none', !isYape);
+                document.getElementById('pay-panel-card').classList.toggle('d-none', isYape);
+            }
+            document.getElementById('pay-tab-yape').addEventListener('click', () => activateTab('yape'));
+            document.getElementById('pay-tab-card').addEventListener('click', () => activateTab('card'));
+
+            // Card number formatting + brand detection
+            document.getElementById('card-number').addEventListener('input', function () {
+                let v = this.value.replace(/\D/g, '').substring(0, 16);
+                this.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+                const icon = document.getElementById('card-brand-icon');
+                if (/^4/.test(v)) {
+                    icon.innerHTML = '<span class="fw-bold small" style="color:#1A1F71;">VISA</span>';
+                } else if (/^5[1-5]/.test(v) || /^2[2-7]/.test(v)) {
+                    icon.innerHTML = '<span class="fw-bold small" style="color:#EB001B;">MC</span>';
+                } else {
+                    icon.innerHTML = '<i class="bi bi-credit-card text-muted fs-5"></i>';
+                }
+            });
+
+            // Expiry auto-format
+            document.getElementById('card-expiry').addEventListener('input', function () {
+                let v = this.value.replace(/\D/g, '').substring(0, 4);
+                if (v.length >= 3) v = v.substring(0, 2) + '/' + v.substring(2);
+                this.value = v;
+            });
+
+            // CVV numbers only
+            document.getElementById('card-cvv').addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').substring(0, 4);
+            });
+
+            // Card name uppercase
+            document.getElementById('card-name').addEventListener('input', function () {
+                this.value = this.value.toUpperCase();
+            });
+        }
+
+        // Populate summary strip
+        document.getElementById('pay-exp-title').textContent = exp.title;
+        document.getElementById('pay-exp-date').textContent = dateInput.value;
+        document.getElementById('pay-exp-travelers').textContent =
+            `${pricingInfo.adultsCount} adulto(s)${pricingInfo.childrenCount > 0 ? ', ' + pricingInfo.childrenCount + ' niño(s)' : ''}`;
+        document.getElementById('pay-exp-total').textContent = `S/${pricingInfo.total}`;
+        document.getElementById('btn-pay-card-amount').textContent = `S/${pricingInfo.total}`;
+
+        // Reset to Yape tab and clear inputs
+        document.getElementById('pay-tab-yape').click();
+        document.getElementById('yape-code').value = '';
+        document.getElementById('yape-code-error').style.display = 'none';
+
+        const bsPayModal = new bootstrap.Modal(payModal);
+        bsPayModal.show();
+
+        // Yape pay
+        const btnYape = document.getElementById('btn-pay-yape');
+        const newBtnYape = btnYape.cloneNode(true);
+        btnYape.parentNode.replaceChild(newBtnYape, btnYape);
+        newBtnYape.addEventListener('click', () => {
+            const code = document.getElementById('yape-code').value.trim();
+            if (!code) {
+                document.getElementById('yape-code-error').style.display = 'block';
+                return;
+            }
+            document.getElementById('yape-code-error').style.display = 'none';
+            bsPayModal.hide();
+            completeBooking(pricingInfo.adultsCount, pricingInfo.childrenCount, `S/${pricingInfo.total}`, `Yape (Op: ${code})`);
+        });
+
+        // Card pay
+        const btnCard = document.getElementById('btn-pay-card');
+        const newBtnCard = btnCard.cloneNode(true);
+        btnCard.parentNode.replaceChild(newBtnCard, btnCard);
+        newBtnCard.addEventListener('click', () => {
+            let valid = true;
+            const num  = document.getElementById('card-number').value.replace(/\s/g, '');
+            const name = document.getElementById('card-name').value.trim();
+            const exp_ = document.getElementById('card-expiry').value.trim();
+            const cvv  = document.getElementById('card-cvv').value.trim();
+
+            ['card-number-error','card-name-error','card-expiry-error','card-cvv-error'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+
+            if (num.length < 16) {
+                document.getElementById('card-number-error').textContent = 'Ingresa un número de tarjeta válido (16 dígitos).';
+                document.getElementById('card-number-error').style.display = 'block';
+                valid = false;
+            }
+            if (!name) {
+                document.getElementById('card-name-error').textContent = 'Ingresa el nombre tal como aparece en tu tarjeta.';
+                document.getElementById('card-name-error').style.display = 'block';
+                valid = false;
+            }
+            if (!/^\d{2}\/\d{2}$/.test(exp_)) {
+                document.getElementById('card-expiry-error').textContent = 'Formato inválido. Usa MM/AA (ej: 08/27).';
+                document.getElementById('card-expiry-error').style.display = 'block';
+                valid = false;
+            }
+            if (cvv.length < 3) {
+                document.getElementById('card-cvv-error').textContent = 'CVV inválido (3 o 4 dígitos).';
+                document.getElementById('card-cvv-error').style.display = 'block';
+                valid = false;
+            }
+            if (!valid) return;
+
+            const brand = num.startsWith('4') ? 'Visa' : (num[0] === '5' || num[0] === '2') ? 'Mastercard' : 'Tarjeta';
+            const masked = '**** **** **** ' + num.slice(-4);
+            bsPayModal.hide();
+            completeBooking(pricingInfo.adultsCount, pricingInfo.childrenCount, `S/${pricingInfo.total}`, `${brand} (${masked})`);
+        });
+    }
+
+    function completeBooking(adults, children, totalStr, paymentMethod) {
+        // Generate Booking Reference Number
+        const bookingRef = 'SC-' + Math.floor(100000 + Math.random() * 900000);
+
+        const nuevaReserva = {
+    codigo: bookingRef,
+    experiencia: exp.title,
+    fecha: dateInput.value,
+    adultos: adults,
+    ninos: children,
+    total: totalStr,
+    usuario: localStorage.getItem('touristEmail'),
+    estado: 'Confirmada',
+    metodoPago: paymentMethod || 'No especificado',
+    fechaRegistro: new Date().toLocaleString()
+};
+
+let reservas =
+JSON.parse(localStorage.getItem('sc_reservas')) || [];
+
+reservas.push(nuevaReserva);
+
+localStorage.setItem(
+    'sc_reservas',
+    JSON.stringify(reservas)
+);
+        
+        // Show Success View
+        bookingFields.classList.add('d-none');
+        bookingSuccess.classList.remove('d-none');
+        
+        document.getElementById('success-ref').textContent = bookingRef;
+        document.getElementById('success-date').textContent = dateInput.value;
+        document.getElementById('success-travelers').textContent = `${adults} Adulto(s) ${children > 0 ? ', ' + children + ' Niño(s)' : ''}`;
+        document.getElementById('success-total').textContent = totalStr;
+        document.getElementById('success-email').textContent = localStorage.getItem('touristEmail') || 'tu correo';
+        const successPaymentEl = document.getElementById('success-payment');
+        if (successPaymentEl) successPaymentEl.textContent = paymentMethod || 'No especificado';
+
+        // Auto scroll to success message
+        bookingSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function showError(inputElement, message) {
@@ -216,21 +899,13 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(commentsStorageKey, JSON.stringify(comments));
     }
 
-    // Render Comments
+    // Render Comments List
     const commentsListEl = document.getElementById('comments-list');
-    const commentCountEl = document.getElementById('comment-count-title');
-    const reviewsCountHeader = document.getElementById('reviews-count-header');
 
     function renderComments() {
         if (!commentsListEl) return;
         commentsListEl.innerHTML = '';
         
-        // Update counts
-        const totalComments = comments.length;
-        if (commentCountEl) commentCountEl.textContent = `Opiniones (${totalComments})`;
-        if (reviewsCountHeader) reviewsCountHeader.textContent = `${totalComments} opiniones`;
-
-        // Calculate and update ratings average if necessary (but let's keep it clean)
         comments.forEach(c => {
             const initials = c.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
             
@@ -263,6 +938,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- DYNAMIC RATINGS CALCULATION AND DISTRIBUTIONS ---
+    function updateRatingsStats() {
+        const ratingsDistList = document.getElementById('ratings-distribution-list');
+        const totalReviews = comments.length;
+        
+        // Calculate statistics
+        let sum = 0;
+        const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+        
+        comments.forEach(c => {
+            sum += c.rating;
+            counts[c.rating] = (counts[c.rating] || 0) + 1;
+        });
+        
+        const avgRating = totalReviews > 0 ? (sum / totalReviews).toFixed(1) : '0.0';
+        
+        // Update average rating text in header
+        const avgHeaderEl = document.querySelector('.detail-header-section .fw-bold.me-1');
+        if (avgHeaderEl) {
+            avgHeaderEl.textContent = avgRating;
+        }
+        
+        // Update count text in header
+        const countHeaderEl = document.getElementById('reviews-count-header');
+        if (countHeaderEl) {
+            countHeaderEl.textContent = `${totalReviews} opiniones`;
+        }
+        
+        // Update count text in section title
+        const countTitleEl = document.getElementById('comment-count-title');
+        if (countTitleEl) {
+            countTitleEl.textContent = `Opiniones (${totalReviews})`;
+        }
+        
+        // Render rating progress bars dynamically
+        if (ratingsDistList) {
+            ratingsDistList.innerHTML = '';
+            for (let star = 5; star >= 1; star--) {
+                const count = counts[star] || 0;
+                const percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+                
+                const barHtml = `
+                    <div class="rating-bar-container">
+                        <span class="rating-bar-label">${star} estrellas</span>
+                        <div class="rating-bar-progress">
+                            <div class="rating-bar-fill" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="rating-bar-count">${count}</span>
+                    </div>
+                `;
+                ratingsDistList.insertAdjacentHTML('beforeend', barHtml);
+            }
+        }
+    }
+
     // Helper to escape HTML to prevent XSS
     function escapeHTML(str) {
         return str.replace(/[&<>'"]/g, 
@@ -276,7 +1006,9 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
+    // Initial render of reviews and calculations
     renderComments();
+    updateRatingsStats();
 
     // Comment Form Submission
     const commentForm = document.getElementById('comment-form');
@@ -313,7 +1045,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 isFormValid = false;
             }
 
+            
+
             if (isFormValid) {
+                const emailUsuario =
+localStorage.getItem('touristEmail');
+
+const reservas =
+JSON.parse(localStorage.getItem('sc_reservas')) || [];
+
+const tieneReserva =
+reservas.some(r =>
+    r.usuario === emailUsuario &&
+    r.experiencia === exp.title
+);
+
+if (!tieneReserva) {
+                    const toastElement = document.getElementById('appToast');
+                    const toastMessage = document.getElementById('toast-message');
+                    if (toastElement) {
+                        toastMessage.textContent = 'Debes reservar esta experiencia antes de opinar.';
+                        const toast = new bootstrap.Toast(toastElement);
+                        toast.show();
+                    }
+                    return;
+                }
                 const newComment = {
                     name: newNameInput.value.trim(),
                     rating: parseInt(selectedRatingInput.value),
@@ -325,8 +1081,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 comments.unshift(newComment);
                 localStorage.setItem(commentsStorageKey, JSON.stringify(comments));
 
-                // Re-render and reset form
+                // Re-render, recalculate and reset form
                 renderComments();
+                updateRatingsStats();
                 commentForm.reset();
 
                 // Clear checked radio stars
