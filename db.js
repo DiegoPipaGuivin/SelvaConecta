@@ -1,65 +1,152 @@
-// db.js - Gestor centralizado de almacenamiento local (Prototipo)
+// =====================================================================
+// db.js — SelvaDB: capa de datos centralizada (localStorage)
+// -----------------------------------------------------------------------
+// Antes, cada página leía/escribía 'sc_reservas' directamente con su
+// propia copia de lógica (detalle.js) mientras otras (perfil.js) pasaban
+// por funciones tipo SelvaDB. Esto generaba duplicación y riesgo de que
+// ambas implementaciones se desincronicen. Ahora TODA la app pasa por
+// este único módulo.
+//
+// Importante: este proyecto no tiene backend, así que las "contraseñas"
+// solo se protegen con un hash simple (no criptográfico). Esto evita que
+// cualquiera pueda iniciar sesión como otro usuario solo escribiendo su
+// correo (como ocurría antes), pero NO sustituye un backend real con
+// hashing seguro (bcrypt/argon2) ni transporte cifrado de credenciales.
+// =====================================================================
 
-const DB_KEYS = {
-    USUARIOS: 'sc_usuarios',
-    RESERVAS: 'sc_reservas',
-    OPERADORES: 'sc_operadores'
-};
+const SelvaDB = (function () {
+    const KEYS = {
+        RESERVAS: 'sc_reservas',
+        USUARIOS: 'sc_usuarios'
+    };
 
-const SelvaDB = {
-    // --- Operadores ---
-    guardarOperador: function(operador) {
-        const operadores = this.obtenerOperadores();
-        operadores.push(operador);
-        localStorage.setItem(DB_KEYS.OPERADORES, JSON.stringify(operadores));
-        return true;
-    },
-    
-    obtenerOperadores: function() {
-        return JSON.parse(localStorage.getItem(DB_KEYS.OPERADORES)) || [];
-    },
-
-    // --- Reservas ---
-    guardarReserva: function(reserva) {
-        const reservas = this.obtenerReservas();
-        reservas.push(reserva);
-        localStorage.setItem(DB_KEYS.RESERVAS, JSON.stringify(reservas));
-        return true;
-    },
-
-    obtenerReservas: function(emailUsuario) {
-        const reservas = JSON.parse(localStorage.getItem(DB_KEYS.RESERVAS)) || [];
-        if (emailUsuario) {
-            return reservas.filter(r => r.usuario === emailUsuario); // Filtra por el campo 'usuario'
+    function _leer(key) {
+        try {
+            const data = JSON.parse(localStorage.getItem(key));
+            return Array.isArray(data) ? data : [];
+        } catch (e) {
+            console.error(`SelvaDB: error leyendo "${key}" de localStorage`, e);
+            return [];
         }
-        return reservas;
-    },
-
-    actualizarTodasLasReservas: function(nuevasReservas) {
-        localStorage.setItem(DB_KEYS.RESERVAS, JSON.stringify(nuevasReservas));
     }
-};
 
-// --- Inyección de Datos Semilla ---
-// Esto asegura que al abrir tu GitHub Pages siempre haya datos para mostrar
-function inicializarDatosDePrueba() {
-    // Si no hay reservas en el sistema, creamos una de prueba automáticamente
-    if (!localStorage.getItem(DB_KEYS.RESERVAS)) {
-        const reservasPrueba = [{
-            codigo: "SC-999999",
-            experiencia: "Comunidad Nativa Yagua",
-            fecha: "2026-10-15",
-            adultos: 2,
-            ninos: 0,
-            total: "S/360",
-            usuario: "prueba@turista.com", // Inicia sesión con este correo en la web para verla
-            estado: "Confirmada",
-            metodoPago: "Tarjeta de Crédito",
-            fechaRegistro: "01/06/2026"
-        }];
-        localStorage.setItem(DB_KEYS.RESERVAS, JSON.stringify(reservasPrueba));
+    function _escribir(key, data) {
+        try {
+            localStorage.setItem(key, JSON.stringify(data));
+            return true;
+        } catch (e) {
+            console.error(`SelvaDB: error escribiendo "${key}" en localStorage`, e);
+            return false;
+        }
     }
-}
 
-// Inicializar la siembra de datos de forma automática
-inicializarDatosDePrueba();
+    // Hash simple tipo "djb2". NO es seguro criptográficamente, solo evita
+    // dejar contraseñas en texto plano en localStorage para esta demo.
+    function _hash(texto) {
+        let hash = 5381;
+        const str = String(texto);
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) + hash) + str.charCodeAt(i);
+            hash |= 0;
+        }
+        return hash.toString(36);
+    }
+
+    // ---------------------------------------------------------------
+    // RESERVAS
+    // ---------------------------------------------------------------
+
+    // Devuelve las reservas de un usuario (por email). Sin email, devuelve todas.
+    function obtenerReservas(email) {
+        const todas = _leer(KEYS.RESERVAS);
+        if (!email) return todas;
+        return todas.filter(r => r.usuario === email);
+    }
+
+    function agregarReserva(reserva) {
+        const todas = _leer(KEYS.RESERVAS);
+        todas.push(reserva);
+        _escribir(KEYS.RESERVAS, todas);
+        return reserva;
+    }
+
+    function actualizarTodasLasReservas(reservas) {
+        return _escribir(KEYS.RESERVAS, reservas);
+    }
+
+    // Cupos: solo cuentan las reservas activas (no canceladas) para una experiencia.
+    function contarReservasActivas(tituloExperiencia) {
+        const todas = _leer(KEYS.RESERVAS);
+        return todas.filter(r => r.experiencia === tituloExperiencia && r.estado !== 'Cancelada').length;
+    }
+
+    // ---------------------------------------------------------------
+    // USUARIOS / AUTENTICACIÓN
+    // ---------------------------------------------------------------
+
+    function registrarUsuario({ nombre, email, telefono, password }) {
+        email = (email || '').trim().toLowerCase();
+        if (!nombre || !email || !password) {
+            return { ok: false, error: 'Completa nombre, correo y contraseña.' };
+        }
+        if (password.length < 6) {
+            return { ok: false, error: 'La contraseña debe tener al menos 6 caracteres.' };
+        }
+        const usuarios = _leer(KEYS.USUARIOS);
+        const existe = usuarios.some(u => u.email === email);
+        if (existe) {
+            return { ok: false, error: 'Ya existe una cuenta registrada con ese correo. Inicia sesión.' };
+        }
+        usuarios.push({ nombre, email, telefono: telefono || '', passwordHash: _hash(password) });
+        _escribir(KEYS.USUARIOS, usuarios);
+        return { ok: true, usuario: { nombre, email, telefono: telefono || '' } };
+    }
+
+    function validarLogin(email, password) {
+        email = (email || '').trim().toLowerCase();
+        const usuarios = _leer(KEYS.USUARIOS);
+        const usuario = usuarios.find(u => u.email === email);
+        if (!usuario) {
+            return { ok: false, error: 'No existe una cuenta con ese correo. Regístrate primero.' };
+        }
+        if (usuario.passwordHash !== _hash(password)) {
+            return { ok: false, error: 'Contraseña incorrecta.' };
+        }
+        return { ok: true, usuario: { nombre: usuario.nombre, email: usuario.email, telefono: usuario.telefono } };
+    }
+
+    function iniciarSesion(usuario) {
+        localStorage.setItem('touristLoggedIn', 'true');
+        localStorage.setItem('touristName', usuario.nombre || '');
+        localStorage.setItem('touristEmail', usuario.email || '');
+        localStorage.setItem('touristPhone', usuario.telefono || '');
+    }
+
+    function cerrarSesion() {
+        localStorage.removeItem('touristLoggedIn');
+        localStorage.removeItem('touristName');
+        localStorage.removeItem('touristEmail');
+        localStorage.removeItem('touristPhone');
+    }
+
+    function usuarioActual() {
+        return {
+            isLoggedIn: localStorage.getItem('touristLoggedIn') === 'true',
+            nombre: localStorage.getItem('touristName') || '',
+            email: localStorage.getItem('touristEmail') || '',
+            telefono: localStorage.getItem('touristPhone') || ''
+        };
+    }
+
+    return {
+        obtenerReservas,
+        agregarReserva,
+        actualizarTodasLasReservas,
+        contarReservasActivas,
+        registrarUsuario,
+        validarLogin,
+        iniciarSesion,
+        cerrarSesion,
+        usuarioActual
+    };
+})();

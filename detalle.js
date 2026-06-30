@@ -119,15 +119,7 @@ habilitarEstrellas('.rating-stars-guide');
     // Determine current experience
     const pageName = window.location.pathname.split('/').pop() || 'detalleAma.html';
     const exp = EXPERIENCES[pageName] || EXPERIENCES['detalleAma.html'];
-    const reservas =
-JSON.parse(localStorage.getItem('sc_reservas')) || [];
-
-const reservasExp =
-reservas.filter(r =>
-    r.experiencia === exp.title
-);
-
-const cuposDisponibles = exp.capacity - reservasExp.length;
+    const cuposDisponibles = exp.capacity - SelvaDB.contarReservasActivas(exp.title);
     const cupos = document.getElementById('cupos-disponibles');
     if (cupos) {
         cupos.innerHTML = `Quedan ${cuposDisponibles} cupos`;
@@ -203,178 +195,12 @@ function(){
     updatePricing();
 
     // --- NAVBAR AUTH SYNC ---
+    // El modal global de login/registro y el pintado del navbar ahora viven
+    // en auth.js (SelvaAuth), compartido por todas las páginas. Aquí solo
+    // necesitamos un alias para no tener que reescribir las llamadas más
+    // abajo en este archivo.
     function updateNavbarAuth() {
-        const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
-        const authBtn = document.getElementById('btn-auth-tourist');
-        const buttonsContainer = document.getElementById('navbar-buttons-container');
-        
-        if (!buttonsContainer) return;
-        
-        // Inject global auth modal if not exists
-        let globalAuthModal = document.getElementById('authModal');
-        if (!globalAuthModal) {
-            const modalHtml = `
-                <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content rounded-4 border-0 shadow-lg">
-                            <div class="modal-header border-0 pb-0">
-                                <h5 class="modal-title font-outfit fw-bold text-success fs-4" id="authModalLabel">Ingresa a SelvaConecta</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4">
-                                <div class="modal-tabs d-flex justify-content-start gap-2 mb-4">
-                                    <button type="button" class="modal-tab-btn active" id="tab-login">Iniciar Sesión</button>
-                                    <button type="button" class="modal-tab-btn" id="tab-register">Registrarse</button>
-                                </div>
-                                <form id="login-form">
-                                    <div class="mb-3">
-                                        <label for="login-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
-                                        <input type="email" class="form-control booking-input" id="login-email" placeholder="ejemplo@correo.com" required>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="login-password" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
-                                        <input type="password" class="form-control booking-input" id="login-password" placeholder="••••••" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Iniciar Sesión</button>
-                                </form>
-                                <form id="register-form" class="d-none">
-                                    <div class="mb-3">
-                                        <label for="reg-name" class="form-label fw-semibold text-muted small">NOMBRE COMPLETO</label>
-                                        <input type="text" class="form-control booking-input" id="reg-name" placeholder="Nombre completo" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="reg-email" class="form-label fw-semibold text-muted small">CORREO ELECTRÓNICO</label>
-                                        <input type="email" class="form-control booking-input" id="reg-email" placeholder="ejemplo@correo.com" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="reg-phone" class="form-label fw-semibold text-muted small">TELÉFONO / WHATSAPP</label>
-                                        <input type="tel" class="form-control booking-input" id="reg-phone" placeholder="987654321" required>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="reg-password" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
-                                        <input type="password" class="form-control booking-input" id="reg-password" placeholder="Mínimo 6 caracteres" required minlength="6">
-                                    </div>
-                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Crear Cuenta</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
-            // Tab Toggle
-            const tLog = document.getElementById('tab-login');
-            const tReg = document.getElementById('tab-register');
-            const fLog = document.getElementById('login-form');
-            const fReg = document.getElementById('register-form');
-            
-            tLog.addEventListener('click', () => {
-                tLog.classList.add('active');
-                tReg.classList.remove('active');
-                fLog.classList.remove('d-none');
-                fReg.classList.add('d-none');
-            });
-            
-            tReg.addEventListener('click', () => {
-                tReg.classList.add('active');
-                tLog.classList.remove('active');
-                fReg.classList.remove('d-none');
-                fLog.classList.add('d-none');
-            });
-            
-            // Form Submissions
-            fLog.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const name = email.split('@')[0];
-                const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
-                
-                localStorage.setItem('touristLoggedIn', 'true');
-                localStorage.setItem('touristName', formattedName);
-                localStorage.setItem('touristEmail', email);
-                localStorage.setItem('touristPhone', '999888777');
-                
-                bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
-                fLog.reset();
-                updateNavbarAuth();
-            });
-            
-            fReg.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('reg-name').value;
-                const email = document.getElementById('reg-email').value;
-                const phone = document.getElementById('reg-phone').value;
-                
-                localStorage.setItem('touristLoggedIn', 'true');
-                localStorage.setItem('touristName', name);
-                localStorage.setItem('touristEmail', email);
-                localStorage.setItem('touristPhone', phone);
-                
-                bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
-                fReg.reset();
-                updateNavbarAuth();
-            });
-        }
-        
-        const oldUserContainer = document.getElementById('user-logged-in-container');
-        if (oldUserContainer) oldUserContainer.remove();
-        
-        if (isLoggedIn) {
-            if (authBtn) authBtn.style.display = 'none';
-            
-            const name = localStorage.getItem('touristName') || 'Turista';
-            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            
-            const userContainerHtml = `
-<div class="d-flex align-items-center gap-2"
-id="user-logged-in-container">
-
-    <span class="user-avatar-nav">
-        ${initials}
-    </span>
-
-    <span class="text-success fw-semibold small">
-        Hola, ${name}
-    </span>
-
-    <a
-        href="perfil.html"
-        class="btn btn-sm btn-outline-success"
-    >
-        Mi Perfil
-    </a>
-
-    <button
-        class="btn btn-link text-danger text-decoration-none fw-semibold p-0 ms-2 small"
-        id="btn-logout-tourist"
-    >
-        Cerrar Sesión
-    </button>
-
-</div>
-`;
-            
-            const regOperatorBtn = document.getElementById('btn-reg-operator');
-            if (regOperatorBtn) {
-                regOperatorBtn.insertAdjacentHTML('beforebegin', userContainerHtml);
-            } else {
-                buttonsContainer.insertAdjacentHTML('beforeend', userContainerHtml);
-            }
-            
-            const logoutBtn = document.getElementById('btn-logout-tourist');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    localStorage.removeItem('touristLoggedIn');
-                    localStorage.removeItem('touristName');
-                    localStorage.removeItem('touristEmail');
-                    localStorage.removeItem('touristPhone');
-                    updateNavbarAuth();
-                });
-            }
-        } else {
-            if (authBtn) authBtn.style.display = 'inline-block';
-        }
+        SelvaAuth.actualizarNavbar();
     }
 
     // Initialize Navbar Auth state
@@ -505,7 +331,8 @@ id="user-logged-in-container">
                                 </div>
                                 
                                 <p class="text-muted small mb-4">Debes registrarte o iniciar sesión para completar tu reserva. Capturaremos tus datos para coordinar el viaje.</p>
-                                
+
+                                <div id="m-reg-error" class="alert alert-danger py-2 small d-none"></div>
                                 <!-- REGISTRATION FORM -->
                                 <form id="modal-reg-form">
                                     <div class="mb-3">
@@ -524,9 +351,10 @@ id="user-logged-in-container">
                                         <label for="m-reg-pass" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
                                         <input type="password" class="form-control booking-input" id="m-reg-pass" required minlength="6" placeholder="Mínimo 6 caracteres">
                                     </div>
-                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Crear Cuenta y Confirmar Reserva</button>
+                                    <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold">Crear Cuenta y Confirmar Reserva</button>
                                 </form>
-                                
+
+                                <div id="m-log-error" class="alert alert-danger py-2 small d-none"></div>
                                 <!-- LOGIN FORM -->
                                 <form id="modal-login-form" class="d-none">
                                     <div class="mb-3">
@@ -537,7 +365,7 @@ id="user-logged-in-container">
                                         <label for="m-log-pass" class="form-label fw-semibold text-muted small">CONTRASEÑA</label>
                                         <input type="password" class="form-control booking-input" id="m-log-pass" required placeholder="••••••">
                                     </div>
-                                    <button type="submit" class="btn btn-success w-100 py-2.5 rounded-pill fw-bold">Iniciar Sesión y Confirmar Reserva</button>
+                                    <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold">Iniciar Sesión y Confirmar Reserva</button>
                                 </form>
                             </div>
                         </div>
@@ -587,15 +415,22 @@ id="user-logged-in-container">
         // Bind registration
         newMRegForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = document.getElementById('m-reg-name').value;
+            const errorEl = document.getElementById('m-reg-error');
+            errorEl.classList.add('d-none');
+
+            const nombre = document.getElementById('m-reg-name').value.trim();
             const email = document.getElementById('m-reg-email').value;
-            const phone = document.getElementById('m-reg-phone').value;
-            
-            localStorage.setItem('touristLoggedIn', 'true');
-            localStorage.setItem('touristName', name);
-            localStorage.setItem('touristEmail', email);
-            localStorage.setItem('touristPhone', phone);
-            
+            const telefono = document.getElementById('m-reg-phone').value.trim();
+            const password = document.getElementById('m-reg-pass').value;
+
+            const resultado = SelvaDB.registrarUsuario({ nombre, email, telefono, password });
+            if (!resultado.ok) {
+                errorEl.textContent = resultado.error;
+                errorEl.classList.remove('d-none');
+                return;
+            }
+
+            SelvaDB.iniciarSesion(resultado.usuario);
             bootstrapModal.hide();
             updateNavbarAuth();
             openPaymentModal(pricingInfo);
@@ -604,15 +439,20 @@ id="user-logged-in-container">
         // Bind login
         newMLogForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            const errorEl = document.getElementById('m-log-error');
+            errorEl.classList.add('d-none');
+
             const email = document.getElementById('m-log-email').value;
-            const name = email.split('@')[0];
-            const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
-            
-            localStorage.setItem('touristLoggedIn', 'true');
-            localStorage.setItem('touristName', formattedName);
-            localStorage.setItem('touristEmail', email);
-            localStorage.setItem('touristPhone', '999888777');
-            
+            const password = document.getElementById('m-log-pass').value;
+
+            const resultado = SelvaDB.validarLogin(email, password);
+            if (!resultado.ok) {
+                errorEl.textContent = resultado.error;
+                errorEl.classList.remove('d-none');
+                return;
+            }
+
+            SelvaDB.iniciarSesion(resultado.usuario);
             bootstrapModal.hide();
             updateNavbarAuth();
             openPaymentModal(pricingInfo);
@@ -888,15 +728,7 @@ id="user-logged-in-container">
     fechaRegistro: new Date().toLocaleString()
 };
 
-let reservas =
-JSON.parse(localStorage.getItem('sc_reservas')) || [];
-
-reservas.push(nuevaReserva);
-
-localStorage.setItem(
-    'sc_reservas',
-    JSON.stringify(reservas)
-);
+SelvaDB.agregarReserva(nuevaReserva);
         
         // Show Success View
         bookingFields.classList.add('d-none');
@@ -1057,18 +889,9 @@ function escapeHTML(str) {
         }
     }
 
-    // Helper to escape HTML to prevent XSS
-    function escapeHTML(str) {
-        return str.replace(/[&<>'"]/g, 
-            tag => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                "'": '&#39;',
-                '"': '&quot;'
-            }[tag] || tag)
-        );
-    }
+    // (La función escapeHTML ya está definida una sola vez más arriba en este
+    // archivo; antes existían dos copias y la segunda no protegía contra
+    // valores null/undefined, lo que podía romper renderComments().)
 
     // Initial render of reviews and calculations
     renderComments();

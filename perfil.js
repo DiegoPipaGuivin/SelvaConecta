@@ -1,7 +1,8 @@
 // --- Perfil de Usuario ---
-const nombre = localStorage.getItem('touristName') || '';
-const email  = localStorage.getItem('touristEmail') || '';
-const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
+const estadoUsuario = SelvaDB.usuarioActual();
+const nombre = estadoUsuario.nombre;
+const email  = estadoUsuario.email;
+const isLoggedIn = estadoUsuario.isLoggedIn;
 
 // Redirigir si no ha iniciado sesión
 if (!isLoggedIn && window.location.pathname.includes('perfil.html')) {
@@ -24,10 +25,7 @@ if (perfilAvatar && nombre) {
 const btnLogout = document.getElementById('btn-logout');
 if (btnLogout) {
     btnLogout.addEventListener('click', () => {
-        localStorage.removeItem('touristLoggedIn');
-        localStorage.removeItem('touristName');
-        localStorage.removeItem('touristEmail');
-        localStorage.removeItem('touristPhone');
+        SelvaDB.cerrarSesion();
         window.location.href = 'index.html';
     });
 }
