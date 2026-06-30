@@ -19,7 +19,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <a class="navbar-brand d-flex align-items-center" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modalEquipo" title="Sobre el equipo de SelvaConecta">
             <img src="logo.png" alt="SelvaConecta" class="logo">
             <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
         </a>
@@ -352,5 +352,69 @@
   </div>
 </div>
 
+
+<!-- Modal: Equipo / Acerca de SelvaConecta -->
+<div class="modal fade" id="modalEquipo" tabindex="-1" aria-labelledby="modalEquipoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content team-modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title font-outfit fw-bold text-success" id="modalEquipoLabel">
+                    <i class="bi bi-people-fill me-2"></i>Nuestro Equipo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <p class="text-muted small mb-4">
+                    SelvaConecta conecta a viajeros con experiencias auténticas de turismo vivencial junto a comunidades de la Amazonía peruana.
+                </p>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">D</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Diego</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">A</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Andre</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">J</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Jhen</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">M</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Marcio</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer flex-column border-0 pt-0 team-modal-footer">
+                <hr class="w-100">
+                <p class="small text-muted mb-1 text-center w-100">
+                    &copy; <span id="anioActual"></span> SelvaConecta. Todos los derechos reservados.
+                </p>
+                <p class="small text-muted mb-0 text-center w-100">
+                    Hecho con <i class="bi bi-heart-fill text-danger"></i> en la Amazonía peruana
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var anioEl = document.getElementById('anioActual');
+        if (anioEl) { anioEl.textContent = new Date().getFullYear(); }
+    });
+</script>
 </body>
 </html>

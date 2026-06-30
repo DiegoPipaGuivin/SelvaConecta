@@ -285,3 +285,214 @@ h1, h2, h3, h4, h5, h6, .font-outfit {
         opacity: 1;
     }
 }
+
+/* Wizard Step Indicators */
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 3.5rem;
+}
+.step-indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--border-color);
+    z-index: 1;
+    transform: translateY(-50%);
+}
+.step-indicator-progress {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background-color: var(--primary);
+    z-index: 2;
+    transform: translateY(-50%);
+    transition: width 0.4s ease;
+}
+.step-dot {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: white;
+    border: 3px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    font-weight: bold;
+    font-family: 'Outfit', sans-serif;
+    color: #64748B;
+    transition: var(--transition);
+    position: relative;
+}
+.step-dot.active {
+    border-color: var(--primary);
+    background-color: var(--primary-light);
+    color: var(--primary);
+    transform: scale(1.1);
+    box-shadow: 0 0 0 5px rgba(10, 92, 54, 0.15);
+}
+.step-dot.completed {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: white;
+}
+.step-label {
+    position: absolute;
+    top: 55px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #64748B;
+    transition: var(--transition);
+}
+.step-dot.active .step-label {
+    color: var(--primary);
+    font-weight: 700;
+}
+.step-dot.completed .step-label {
+    color: var(--primary);
+}
+
+/* Wizard Steps Form Containers */
+.wizard-step {
+    display: none;
+}
+.wizard-step.active {
+    display: block;
+    animation: slideInStep 0.4s ease-out forwards;
+}
+
+@keyframes slideInStep {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Image Upload Zone */
+.drag-drop-zone {
+    border: 2px dashed rgba(10, 92, 54, 0.3);
+    background-color: var(--primary-light);
+    border-radius: 1rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.drag-drop-zone:hover {
+    border-color: var(--primary);
+    background-color: rgba(10, 92, 54, 0.05);
+    transform: translateY(-2px);
+}
+.drag-drop-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+.preview-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+.uploaded-preview-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Tab Navigation for Modals */
+.modal-tabs {
+    border-bottom: 2px solid var(--border-color);
+}
+.modal-tab-btn {
+    border: none;
+    background: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    color: #64748B;
+    position: relative;
+    transition: var(--transition);
+}
+.modal-tab-btn.active {
+    color: var(--primary);
+}
+.modal-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 3px;
+}
+
+/* Star Rating transition */
+.rating-bar-fill {
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* User avatar header nav */
+.user-avatar-nav {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+    border: 1.5px solid var(--primary);
+    font-size: 0.85rem;
+}
+
+/* Modal: Equipo / Acerca de SelvaConecta */
+.navbar-brand[data-bs-toggle="modal"] {
+    cursor: pointer;
+}
+.team-modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+.team-member-row {
+    padding: 0.4rem 0;
+}
+.team-avatar {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    color: #fff;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+}
+.team-modal-footer hr {
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+}

@@ -19,7 +19,7 @@
 <!-- Navbar Minimal -->
 <nav class="navbar bg-white shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <a class="navbar-brand d-flex align-items-center" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modalEquipo" title="Sobre el equipo de SelvaConecta">
             <img src="logo.png" alt="SelvaConecta" class="logo">
             <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
         </a>
@@ -71,15 +71,28 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="op-razon-social" class="form-label fw-semibold text-muted small">NOMBRE DE LA COMUNIDAD O RAZÓN SOCIAL</label>
-                            <input type="text" class="form-control booking-input" id="op-razon-social" required placeholder="Ej. Comunidad Nativa Kukama de San José">
-                            <div class="invalid-feedback">Por favor, ingrese el nombre de la comunidad o razón social.</div>
+                            <label for="op-razon-social" class="form-label fw-semibold text-muted small">COMUNIDAD U ORGANIZACIÓN A REGISTRAR</label>
+                            <select class="form-select booking-input" id="op-razon-social" required>
+                                <option value="" disabled selected>Seleccione su comunidad u organización...</option>
+                                <option value="ORPIO (Organización Regional de Pueblos Indígenas del Oriente) - Loreto">ORPIO - Organización Regional de Pueblos Indígenas del Oriente (Loreto)</option>
+                                <option value="Federación Huaynakana Kamatahuara Kana - Pueblo Kukama, Nauta (Loreto)">Federación Huaynakana Kamatahuara Kana - Pueblo Kukama, Nauta (Loreto)</option>
+                                <option value="CEPKA (Consejo Étnico de los Pueblos Kichwa de la Amazonía) - Lamas (San Martín)">CEPKA - Consejo Étnico de los Pueblos Kichwa de la Amazonía, Lamas (San Martín)</option>
+                                <option value="Comunidad Nativa Puerto Luz - Pueblo Harakbut (Madre de Dios)">Comunidad Nativa Puerto Luz - Pueblo Harakbut (Madre de Dios)</option>
+                                <option value="Comunidades Awajún del Río Santiago, Nieva y Cenepa - Condorcanqui (Amazonas)">Comunidades Awajún del Río Santiago, Nieva y Cenepa - Condorcanqui (Amazonas)</option>
+                                <option value="FENACOKA (Federación Nativa de Comunidades Kakataibo) - Ucayali">FENACOKA - Federación Nativa de Comunidades Kakataibo (Ucayali)</option>
+                                <option value="Otra">Mi comunidad u operación no aparece en la lista</option>
+                            </select>
+                            <div class="invalid-feedback">Por favor, seleccione su comunidad u organización.</div>
+                            <div class="form-text" id="op-razon-social-help" style="display:none;">
+                                Si tu comunidad no aparece en la lista, contáctanos por WhatsApp y la incorporamos a nuestro directorio.
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="op-representante" class="form-label fw-semibold text-muted small">NOMBRE DEL REPRESENTANTE / LÍDER</label>
                             <input type="text" class="form-control booking-input" id="op-representante" required placeholder="Nombre completo del representante legal o curaca">
                             <div class="invalid-feedback">Por favor, ingrese el nombre del representante.</div>
+                            <div class="form-text">Autocompletado según el directorio público de organizaciones indígenas. Puede editarlo si usted es otro representante autorizado.</div>
                         </div>
 
                         <div class="row g-3 mb-3">
@@ -709,6 +722,35 @@
             localStorage.setItem('registeredOperator', JSON.stringify(operatorProfile));
         }
 
+        // Directorio referencial de comunidades/organizaciones indígenas y sus líderes actuales
+        // (información pública recopilada de fuentes periodísticas y de las propias organizaciones).
+        const lideresPorComunidad = {
+            "ORPIO (Organización Regional de Pueblos Indígenas del Oriente) - Loreto": "Beltrán Sandi Tuituy (Presidente de ORPIO)",
+            "Federación Huaynakana Kamatahuara Kana - Pueblo Kukama, Nauta (Loreto)": "Mari Luz Canaquiri Murayari (Presidenta)",
+            "CEPKA (Consejo Étnico de los Pueblos Kichwa de la Amazonía) - Lamas (San Martín)": "Inocente Sangama Sangama (Presidente de CEPKA)",
+            "Comunidad Nativa Puerto Luz - Pueblo Harakbut (Madre de Dios)": "Fermín Chimatani Tayori (Líder Harakbut)",
+            "Comunidades Awajún del Río Santiago, Nieva y Cenepa - Condorcanqui (Amazonas)": "Apu Romer Orrego Ikam",
+            "FENACOKA (Federación Nativa de Comunidades Kakataibo) - Ucayali": "Marcelo Odicio Estrella (Apu / Presidente de FENACOKA)"
+        };
+
+        const selectComunidad = document.getElementById('op-razon-social');
+        const inputRepresentante = document.getElementById('op-representante');
+        const ayudaComunidad = document.getElementById('op-razon-social-help');
+
+        if (selectComunidad && inputRepresentante) {
+            selectComunidad.addEventListener('change', () => {
+                const seleccion = selectComunidad.value;
+
+                if (seleccion === 'Otra') {
+                    inputRepresentante.value = '';
+                    if (ayudaComunidad) ayudaComunidad.style.display = 'block';
+                } else {
+                    inputRepresentante.value = lideresPorComunidad[seleccion] || '';
+                    if (ayudaComunidad) ayudaComunidad.style.display = 'none';
+                }
+            });
+        }
+
         // Initialize progress line
         showStep(1);
 
@@ -736,6 +778,70 @@
         btnNext.addEventListener('click', () => {
             if (currentStep === 3) setTimeout(updatePreview, 50);
         }, true);
+    });
+</script>
+
+<!-- Modal: Equipo / Acerca de SelvaConecta -->
+<div class="modal fade" id="modalEquipo" tabindex="-1" aria-labelledby="modalEquipoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content team-modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title font-outfit fw-bold text-success" id="modalEquipoLabel">
+                    <i class="bi bi-people-fill me-2"></i>Nuestro Equipo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <p class="text-muted small mb-4">
+                    SelvaConecta conecta a viajeros con experiencias auténticas de turismo vivencial junto a comunidades de la Amazonía peruana.
+                </p>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">D</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Diego</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">A</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Andre</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">J</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Jhen</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center team-member-row">
+                        <div class="team-avatar">M</div>
+                        <div class="ms-3">
+                            <div class="fw-bold">Marcio</div>
+                            <div class="small text-muted">Equipo de desarrollo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer flex-column border-0 pt-0 team-modal-footer">
+                <hr class="w-100">
+                <p class="small text-muted mb-1 text-center w-100">
+                    &copy; <span id="anioActual"></span> SelvaConecta. Todos los derechos reservados.
+                </p>
+                <p class="small text-muted mb-0 text-center w-100">
+                    Hecho con <i class="bi bi-heart-fill text-danger"></i> en la Amazonía peruana
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var anioEl = document.getElementById('anioActual');
+        if (anioEl) { anioEl.textContent = new Date().getFullYear(); }
     });
 </script>
 </body>
