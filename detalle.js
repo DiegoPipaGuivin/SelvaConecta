@@ -85,6 +85,37 @@ const EXPERIENCES = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+// --- Interactividad de las Estrellas del Guía ---
+// --- Interactividad para colorear las estrellas (Experiencia y Guía) ---
+function habilitarEstrellas(selectorClass) {
+    document.querySelectorAll(`${selectorClass} label`).forEach(label => {
+        label.addEventListener('click', function() {
+            const selectedInput = document.getElementById(this.getAttribute('for'));
+            if (!selectedInput) return;
+            
+            // Forzar que el input oculto se marque (checked)
+            selectedInput.checked = true;
+            
+            const val = parseInt(selectedInput.value);
+            
+            // Colorear las estrellas solo de este grupo
+            document.querySelectorAll(`${selectorClass} label`).forEach(l => {
+                const currentInput = document.getElementById(l.getAttribute('for'));
+                if (currentInput && parseInt(currentInput.value) <= val) {
+                    l.classList.remove('bi-star');
+                    l.classList.add('bi-star-fill');
+                } else if (currentInput) {
+                    l.classList.remove('bi-star-fill');
+                    l.classList.add('bi-star');
+                }
+            });
+        });
+    });
+}
+
+// Inicializar ambos grupos de estrellas
+habilitarEstrellas('.rating-stars');
+habilitarEstrellas('.rating-stars-guide');
     // Determine current experience
     const pageName = window.location.pathname.split('/').pop() || 'detalleAma.html';
     const exp = EXPERIENCES[pageName] || EXPERIENCES['detalleAma.html'];
@@ -349,6 +380,8 @@ id="user-logged-in-container">
     // Initialize Navbar Auth state
     updateNavbarAuth();
 
+
+
     // --- FORM VALIDATION AND BOOKING REGISTRATION FLOW ---
     if (bookingForm) {
         bookingForm.addEventListener('submit', (e) => {
@@ -357,6 +390,7 @@ id="user-logged-in-container">
             // Clear prior errors
             document.querySelectorAll('.invalid-feedback').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.booking-input').forEach(el => el.classList.remove('is-invalid'));
+            
 
             let isValid = true;
 
@@ -902,41 +936,71 @@ localStorage.setItem(
     // Render Comments List
     const commentsListEl = document.getElementById('comments-list');
 
-    function renderComments() {
-        if (!commentsListEl) return;
-        commentsListEl.innerHTML = '';
+   function renderComments() {
+    if (!commentsListEl) return;
+    commentsListEl.innerHTML = '';
+    
+    comments.forEach(c => {
+        // Generar iniciales del usuario (ej: "Alejandra Ruiz" -> "AR")
+        const initials = c.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         
-        comments.forEach(c => {
-            const initials = c.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            
-            // Create Star HTML
-            let starsHtml = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= c.rating) {
-                    starsHtml += '<i class="bi bi-star-fill text-warning me-1"></i>';
-                } else {
-                    starsHtml += '<i class="bi bi-star text-muted me-1"></i>';
-                }
+        // Crear estrellas HTML para la EXPERIENCIA GENERAL
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= c.rating) {
+                starsHtml += '<i class="bi bi-star-fill text-warning me-1"></i>';
+            } else {
+                starsHtml += '<i class="bi bi-star text-muted me-1"></i>';
             }
+        }
 
-            const commentHtml = `
-                <div class="comment-card fade-in">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="user-initials-avatar">${initials}</div>
-                            <div>
-                                <h6 class="mb-0 fw-semibold">${escapeHTML(c.name)}</h6>
-                                <div class="text-muted small">${c.date}</div>
-                            </div>
+        // Crear estrellas para el GUÍA LOCAL (Por defecto 5 si es antiguo)
+        const estrellasGuia = '⭐'.repeat(c.guideRating || 5);
+
+        // Construir la tarjeta del comentario completa combinando todos los datos
+        const commentHTML = `
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; font-weight: bold;">
+                            ${initials}
                         </div>
-                        <div class="rating-stars">${starsHtml}</div>
+                        <div>
+                            <h6 class="mb-0 fw-bold font-outfit">${escapeHTML(c.name)}</h6>
+                            <small class="text-muted">${escapeHTML(c.date)}</small>
+                        </div>
                     </div>
-                    <p class="mb-0 text-muted fs-6" style="white-space: pre-line;">${escapeHTML(c.text)}</p>
+                    
+                    <div class="mb-2">
+                        ${starsHtml} <span class="ms-2 small text-muted">Experiencia</span>
+                    </div>
+                    
+                    <div class="mb-3 small">
+                        <span class="badge bg-light text-dark border">
+                            <i class="bi bi-person-badge text-success me-1"></i>Guía Local: ${estrellasGuia}
+                        </span>
+                    </div>
+                    
+                    <p class="mb-0 text-secondary">${escapeHTML(c.text)}</p>
                 </div>
-            `;
-            commentsListEl.insertAdjacentHTML('beforeend', commentHtml);
-        });
-    }
+            </div>
+        `;
+        
+        // Insertar la tarjeta en la lista
+        commentsListEl.insertAdjacentHTML('beforeend', commentHTML);
+    });
+}
+
+// Función Helper de seguridad (por si no la tienes definida arriba en detalle.js)
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
 
     // --- DYNAMIC RATINGS CALCULATION AND DISTRIBUTIONS ---
     function updateRatingsStats() {
@@ -1013,82 +1077,95 @@ localStorage.setItem(
     // Comment Form Submission
     const commentForm = document.getElementById('comment-form');
     if (commentForm) {
-        commentForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        // --- NUEVO: Interactividad para colorear las estrellas del Guía ---
+    document.querySelectorAll('.rating-stars-guide label').forEach(label => {
+        label.addEventListener('click', function() {
+            const selectedInput = document.getElementById(this.getAttribute('for'));
+            if (!selectedInput) return;
+            const val = parseInt(selectedInput.value);
             
-            const newNameInput = document.getElementById('comment-author-name');
-            const newTextInput = document.getElementById('comment-text');
-            const selectedRatingInput = document.querySelector('input[name="comment-rating"]:checked');
-
-            let isFormValid = true;
-
-            // Clear errors
-            document.getElementById('comment-name-error').style.display = 'none';
-            document.getElementById('comment-text-error').style.display = 'none';
-            document.getElementById('comment-rating-error').style.display = 'none';
-
-            if (!newNameInput.value.trim()) {
-                document.getElementById('comment-name-error').textContent = 'Ingrese su nombre.';
-                document.getElementById('comment-name-error').style.display = 'block';
-                isFormValid = false;
-            }
-
-            if (!newTextInput.value.trim()) {
-                document.getElementById('comment-text-error').textContent = 'Escriba un comentario sobre su experiencia.';
-                document.getElementById('comment-text-error').style.display = 'block';
-                isFormValid = false;
-            }
-
-            if (!selectedRatingInput) {
-                document.getElementById('comment-rating-error').textContent = 'Seleccione una calificación (estrellas).';
-                document.getElementById('comment-rating-error').style.display = 'block';
-                isFormValid = false;
-            }
-
-            
-
-            if (isFormValid) {
-                const emailUsuario =
-localStorage.getItem('touristEmail');
-
-const reservas =
-JSON.parse(localStorage.getItem('sc_reservas')) || [];
-
-const tieneReserva =
-reservas.some(r =>
-    r.usuario === emailUsuario &&
-    r.experiencia === exp.title
-);
-
-if (!tieneReserva) {
-                    const toastElement = document.getElementById('appToast');
-                    const toastMessage = document.getElementById('toast-message');
-                    if (toastElement) {
-                        toastMessage.textContent = 'Debes reservar esta experiencia antes de opinar.';
-                        const toast = new bootstrap.Toast(toastElement);
-                        toast.show();
-                    }
-                    return;
+            document.querySelectorAll('.rating-stars-guide label').forEach(l => {
+                const currentInput = document.getElementById(l.getAttribute('for'));
+                if (currentInput && parseInt(currentInput.value) <= val) {
+                    l.classList.remove('bi-star');
+                    l.classList.add('bi-star-fill');
+                } else if (currentInput) {
+                    l.classList.remove('bi-star-fill');
+                    l.classList.add('bi-star');
                 }
-                const newComment = {
-                    name: newNameInput.value.trim(),
-                    rating: parseInt(selectedRatingInput.value),
-                    text: newTextInput.value.trim(),
-                    date: new Date().toLocaleDateString('es-ES')
-                };
-
-                // Add to list and save to storage
-                comments.unshift(newComment);
-                localStorage.setItem(commentsStorageKey, JSON.stringify(comments));
-
-                // Re-render, recalculate and reset form
-                renderComments();
-                updateRatingsStats();
-                commentForm.reset();
-
-                // Clear checked radio stars
-                document.querySelectorAll('input[name="comment-rating"]').forEach(radio => radio.checked = false);
-            }
+            });
         });
-    }
+    });
+
+if (commentForm) {
+    commentForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Evita que la página se recargue
+
+        // 1. Validar si el usuario ha iniciado sesión
+        const emailUsuario = localStorage.getItem('touristEmail') || '';
+        const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
+
+        if (!isLoggedIn) {
+            alert('Debes iniciar sesión con tu correo para dejar una opinión.');
+            return;
+        }
+
+        // 2. Validar si el usuario tiene una reserva comprada para ESTA experiencia
+        const reservas = JSON.parse(localStorage.getItem('sc_reservas')) || [];
+        const tieneReserva = reservas.some(r => 
+            r.usuario === emailUsuario && 
+            r.experiencia === exp.title
+        );
+
+        if (!tieneReserva) {
+            alert(`Aún no puedes comentar. Debes tener una reserva confirmada para "${exp.title}".`);
+            return;
+        }
+
+        // 3. Capturar las estrellas de la Experiencia y del Guía
+        const selectedRatingInput = document.querySelector('input[name="comment-rating"]:checked');
+        const selectedGuideRatingInput = document.querySelector('input[name="guide-rating"]:checked');
+
+        // Validar que haya tocado las estrellas
+        if (!selectedRatingInput || !selectedGuideRatingInput) {
+            alert("Por favor, selecciona cuántas estrellas le das a la experiencia Y al guía.");
+            return;
+        }
+
+        // Validar que los campos de texto existan para evitar errores
+        if (!newNameInput || !newTextInput) {
+            console.error("No se encontraron los campos comment-name o comment-text en el HTML.");
+            return;
+        }
+
+        // 4. Crear el nuevo comentario
+        const newComment = {
+            name: newNameInput.value.trim() || 'Turista',
+            rating: parseInt(selectedRatingInput.value),
+            guideRating: parseInt(selectedGuideRatingInput.value),
+            text: newTextInput.value.trim(),
+            date: new Date().toLocaleDateString('es-ES')
+        };
+
+        // 5. Guardar en el almacenamiento local (LocalStorage)
+        comments.unshift(newComment); // Lo pone de primero en la lista
+        localStorage.setItem(commentsStorageKey, JSON.stringify(comments));
+
+        // 6. Actualizar la interfaz
+        renderComments();
+        if (typeof updateRatingsStats === 'function') {
+            updateRatingsStats();
+        }
+
+        // 7. Limpiar el formulario y las estrellas visuales
+        commentForm.reset();
+        document.querySelectorAll('.rating-stars label, .rating-stars-guide label').forEach(l => {
+            l.classList.remove('bi-star-fill');
+            l.classList.add('bi-star');
+        });
+
+        alert("¡Tu opinión se ha registrado con éxito!");
+    });
+}
+}
 });

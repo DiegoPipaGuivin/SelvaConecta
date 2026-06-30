@@ -272,22 +272,34 @@
             <div class="bg-white p-4 rounded-4 border shadow-sm">
                 <h4 class="font-outfit fw-bold mb-3">Deja tu opinión</h4>
                 <form id="comment-form">
+                    <form id="commentForm">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold text-muted small d-block">TU VALORACIÓN</label>
-                        <div class="star-rating-input">
-                            <input type="radio" id="star5" name="comment-rating" value="5"><label for="star5" title="Excelente"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star4" name="comment-rating" value="4"><label for="star4" title="Bueno"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star3" name="comment-rating" value="3"><label for="star3" title="Regular"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star2" name="comment-rating" value="2"><label for="star2" title="Malo"><i class="bi bi-star-fill"></i></label>
-                            <input type="radio" id="star1" name="comment-rating" value="1"><label for="star1" title="Pésimo"><i class="bi bi-star-fill"></i></label>
-                        </div>
-                        <div id="comment-rating-error" class="text-danger small mt-1" style="display:none;"></div>
-                    </div>
+    <label class="form-label fw-semibold text-dark">Califica la Experiencia General:</label>
+    <div class="rating-stars d-flex gap-2 fs-4 text-warning">
+        <input type="radio" name="comment-rating" value="1" id="star1" class="d-none"><label for="star1" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="comment-rating" value="2" id="star2" class="d-none"><label for="star2" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="comment-rating" value="3" id="star3" class="d-none"><label for="star3" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="comment-rating" value="4" id="star4" class="d-none"><label for="star4" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="comment-rating" value="5" id="star5" class="d-none"><label for="star5" class="bi bi-star cursor-pointer"></label>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-semibold text-dark">Califica al Guía Local (Trato, conocimiento y seguridad):</label>
+    <div class="rating-stars-guide d-flex gap-2 fs-4 text-warning">
+        <input type="radio" name="guide-rating" value="1" id="gstar1" class="d-none"><label for="gstar1" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="guide-rating" value="2" id="gstar2" class="d-none"><label for="gstar2" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="guide-rating" value="3" id="gstar3" class="d-none"><label for="gstar3" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="guide-rating" value="4" id="gstar4" class="d-none"><label for="gstar4" class="bi bi-star cursor-pointer"></label>
+        <input type="radio" name="guide-rating" value="5" id="gstar5" class="d-none"><label for="gstar5" class="bi bi-star cursor-pointer"></label>
+    </div>
+</div>
                     <div class="mb-3">
                         <label for="comment-author-name" class="form-label fw-semibold text-muted small">TU NOMBRE</label>
                         <input type="text" id="comment-author-name" class="form-control booking-input" placeholder="Nombre completo" required>
                         <div id="comment-name-error" class="text-danger small mt-1" style="display:none;"></div>
                     </div>
+                   
                     <div class="mb-3">
                         <label for="comment-text" class="form-label fw-semibold text-muted small">TU COMENTARIO</label>
                         <textarea id="comment-text" rows="4" class="form-control booking-input" placeholder="Describe tu experiencia detalladamente para ayudar a otros viajeros..." required></textarea>

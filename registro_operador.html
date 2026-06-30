@@ -355,6 +355,27 @@
                     </div>
 
                 </form>
+                <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+    <h6 class="fw-bold text-success font-outfit"><i class="bi bi-calculator me-2"></i>Modelo de Sostenibilidad (Transparencia Financiera)</h6>
+    <p class="small text-muted mb-2">Por cada reserva completada a través de SelvaConecta, la distribución de ingresos se calcula automáticamente de la siguiente manera:</p>
+    <ul class="small text-dark mb-3">
+        <li><strong>85% de la tarifa:</strong> Va directamente a la comunidad u operador local para financiar el turismo vivencial y la conservación del entorno.</li>
+        <li><strong>15% de la tarifa:</strong> Comisión de SelvaConecta para el mantenimiento técnico de la plataforma y marketing digital del destino.</li>
+    </ul>
+    
+    <div class="bg-white p-2 rounded border border-success-subtle small shadow-sm text-center">
+        Si cobras <strong id="calc-precio-original">S/ 0.00</strong> por adulto: <br>
+        <span class="text-success fw-bold">Tú ganas: S/ <span id="calc-ganancia-operador">0.00</span></span> | 
+        <span class="text-muted">SelvaConecta: S/ <span id="calc-ganancia-plataforma">0.00</span></span>
+    </div>
+</div>
+
+<div class="form-check mb-3 small">
+    <input class="form-check-input" type="checkbox" id="terms-accept" required>
+    <label class="form-check-input-label text-secondary" for="terms-accept">
+        Acepto los Términos de Co-creación Comercial y autorizo la retención del 15% de comisión por pasarela de pago.
+    </label>
+</div>
 
                 <!-- SUCCESS VIEW -->
                 <div class="text-center py-5 d-none" id="wizard-success-view">
@@ -410,8 +431,55 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+
+        const inputPrecioAdulto = document.getElementById('exp-price-adult');
+    const simPrecioBase     = document.getElementById('sim-precio-base');
+    const simGananciaOp     = document.getElementById('sim-ganancia-operador');
+    const simGananciaPlat   = document.getElementById('sim-ganancia-plataforma');
+
+    if (inputPrecioAdulto) {
+        inputPrecioAdulto.addEventListener('input', () => {
+            const precio = parseFloat(inputPrecioAdulto.value) || 0;
+            
+            // Operaciones matemáticas del split
+            const gananciaOperador   = (precio * 0.85).toFixed(2);
+            const gananciaPlataforma = (precio * 0.15).toFixed(2);
+
+            // Reflejar cambios instantáneamente en la interfaz
+            if (simPrecioBase)   simPrecioBase.textContent = `S/ ${precio.toFixed(2)}`;
+            if (simGananciaOp)   simGananciaOp.textContent = gananciaOperador;
+            if (simGananciaPlat) simGananciaPlat.textContent = gananciaPlataforma;
+        });
+    }
+
+    
         let currentStep = 1;
         const totalSteps = 4;
+
+        const inputPrecio = document.getElementById('exp-price-adult');
+    
+    // Elementos del simulador
+    const txtPrecioOriginal = document.getElementById('calc-precio-original');
+    const txtGananciaOperador = document.getElementById('calc-ganancia-operador');
+    const txtGananciaPlataforma = document.getElementById('calc-ganancia-plataforma');
+
+    if (inputPrecio) {
+        inputPrecio.addEventListener('input', () => {
+            const precio = parseFloat(inputPrecio.value) || 0;
+            
+            // Cálculos del modelo de negocio (85% / 15%)
+            const gananciaOperador = (precio * 0.85).toFixed(2);
+            const gananciaPlataforma = (precio * 0.15).toFixed(2);
+
+            // Inyectar valores en la interfaz en tiempo real
+            if (txtPrecioOriginal) txtPrecioOriginal.textContent = `S/ ${precio.toFixed(2)}`;
+            if (txtGananciaOperador) txtGananciaOperador.textContent = gananciaOperador;
+            if (txtGananciaPlataforma) txtGananciaPlataforma.textContent = gananciaPlataforma;
+        });
+        
+    }
+    
+    
         
         const btnPrev = document.getElementById('btn-prev-step');
         const btnNext = document.getElementById('btn-next-step');
