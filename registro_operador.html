@@ -42,27 +42,82 @@
                     <div class="step-indicator-progress" id="step-progress-bar"></div>
                     <div class="step-dot active" id="dot-1">
                         1
-                        <span class="step-label">Identidad</span>
+                        <span class="step-label">Términos</span>
                     </div>
                     <div class="step-dot" id="dot-2">
                         2
-                        <span class="step-label">Experiencia</span>
+                        <span class="step-label">Identidad</span>
                     </div>
                     <div class="step-dot" id="dot-3">
                         3
-                        <span class="step-label">Sostenibilidad</span>
+                        <span class="step-label">Experiencia</span>
                     </div>
                     <div class="step-dot" id="dot-4">
                         4
+                        <span class="step-label">Sostenibilidad</span>
+                    </div>
+                    <div class="step-dot" id="dot-5">
+                        5
                         <span class="step-label">Pago</span>
                     </div>
                 </div>
 
                 <!-- FORM WIZARD -->
                 <form id="operator-wizard-form" novalidate>
-                    
-                    <!-- STEP 1: IDENTIDAD Y SEGURIDAD -->
+
+                    <!-- STEP 1: TÉRMINOS Y CONDICIONES (OBLIGATORIO) -->
                     <div class="wizard-step active" id="step-1">
+                        <div class="mb-4">
+                            <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
+                                <i class="bi bi-file-earmark-text text-success me-2"></i>Paso 1: Términos y Condiciones de Co-creación Comercial
+                            </h4>
+                            <p class="text-muted small">Antes de continuar con tu registro, lee y acepta los términos que regulan la relación entre tu comunidad/operación y SelvaConecta.</p>
+                        </div>
+
+                        <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                            <h6 class="fw-bold text-success font-outfit"><i class="bi bi-calculator me-2"></i>Modelo de Sostenibilidad (Transparencia Financiera)</h6>
+                            <p class="small text-muted mb-2">Por cada reserva completada a través de SelvaConecta, la distribución de ingresos se calcula automáticamente de la siguiente manera:</p>
+                            <ul class="small text-dark mb-3">
+                                <li><strong>85% de la tarifa:</strong> Va directamente a la comunidad u operador local para financiar el turismo vivencial y la conservación del entorno.</li>
+                                <li><strong>15% de la tarifa:</strong> Comisión de SelvaConecta para el mantenimiento técnico de la plataforma y marketing digital del destino.</li>
+                            </ul>
+                            <div class="bg-white p-2 rounded border border-success-subtle small shadow-sm text-center">
+                                Si cobras <strong>S/ 200.00</strong> por adulto: <br>
+                                <span class="text-success fw-bold">Tú ganas: S/ 170.00</span> |
+                                <span class="text-muted">SelvaConecta: S/ 30.00</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted small d-block">RESUMEN DE LOS TÉRMINOS Y CONDICIONES (TCO-2026-V1)</label>
+                            <div class="border rounded-3 p-3 small text-muted" style="max-height: 260px; overflow-y: auto; background:#fff;">
+                                <p><strong>1. Objeto del servicio:</strong> SelvaConecta es un canal digital de intermediación y visibilización; no opera directamente los servicios logísticos, de transporte, hospedaje o guiado.</p>
+                                <p><strong>2. Registro y declaración jurada:</strong> El Operador debe proveer información fidedigna y verificable, contar con permisos o respaldo comunal legítimo, y presentar de forma transparente sus servicios y niveles de dificultad reales.</p>
+                                <p><strong>3. Obligaciones del Operador:</strong> Respetar precios e itinerarios publicados, garantizar la seguridad del pasajero (chalecos salvavidas, botiquín) y velar por la sostenibilidad ambiental y cultural. El Operador es responsable directo de la coordinación de botes y traslados fluviales.</p>
+                                <p><strong>4. Régimen económico:</strong> El registro es gratuito. La Plataforma retiene un porcentaje fijo (15%) por cada reserva pagada con éxito, conforme al anexo tarifario aceptado al dar de alta el catálogo.</p>
+                                <p><strong>5. Cancelaciones:</strong> Se procesan según la política general del portal. Ante fuerza mayor (clima, caudal de ríos, contingencias comunales), el Operador debe notificar de inmediato para reprogramar o devolver fondos.</p>
+                                <p><strong>6. Propiedad intelectual:</strong> El Operador otorga a SelvaConecta una licencia no exclusiva y gratuita sobre fotos, videos y descripciones para fines de marketing, garantizando que no infringen derechos de terceros.</p>
+                                <p><strong>7. Desvinculación:</strong> Cualquiera de las partes puede terminar la relación con 15 días de anticipación. Las reservas ya confirmadas deben ejecutarse igualmente. SelvaConecta puede suspender el perfil de forma inmediata ante incumplimientos graves.</p>
+                                <p class="mb-0"><strong>8. Jurisdicción:</strong> Las partes se someten a la legislación peruana y a los tribunales de Iquitos, Loreto.</p>
+                            </div>
+                            <div class="form-text">
+                                <a href="terminos_condiciones_operador.pdf" target="_blank" rel="noopener">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Ver / descargar el documento completo en PDF
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="terms-accept" required>
+                            <label class="form-check-label text-secondary small" for="terms-accept">
+                                He leído y <strong>acepto los Términos de Co-creación Comercial (TCO-2026-V1)</strong> y autorizo la retención del 15% de comisión por pasarela de pago. *
+                            </label>
+                            <div class="invalid-feedback">Debes aceptar los Términos y Condiciones para continuar con tu registro.</div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: IDENTIDAD Y SEGURIDAD -->
+                    <div class="wizard-step" id="step-2">
                         <div class="mb-4">
                             <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
                                 <i class="bi bi-shield-check text-success me-2"></i>Paso 1: Datos de Identidad y Seguridad
@@ -128,11 +183,11 @@
                         </div>
                     </div>
 
-                    <!-- STEP 2: DETALLES DE LA EXPERIENCIA -->
-                    <div class="wizard-step" id="step-2">
+                    <!-- STEP 3: DETALLES DE LA EXPERIENCIA -->
+                    <div class="wizard-step" id="step-3">
                         <div class="mb-4">
                             <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
-                                <i class="bi bi-compass text-success me-2"></i>Paso 2: Detalles de la Experiencia (Producto)
+                                <i class="bi bi-compass text-success me-2"></i>Paso 3: Detalles de la Experiencia (Producto)
                             </h4>
                             <p class="text-muted small">Crea el producto que alimentará dinámicamente nuestra plataforma. Esta información será mostrada a los turistas.</p>
                         </div>
@@ -214,11 +269,11 @@
                         </div>
                     </div>
 
-                    <!-- STEP 3: SOSTENIBILIDAD Y SEGURIDAD -->
-                    <div class="wizard-step" id="step-3">
+                    <!-- STEP 4: SOSTENIBILIDAD Y SEGURIDAD -->
+                    <div class="wizard-step" id="step-4">
                         <div class="mb-4">
                             <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
-                                <i class="bi bi-tree text-success me-2"></i>Paso 3: Sostenibilidad y Seguridad (Factor Diferencial)
+                                <i class="bi bi-tree text-success me-2"></i>Paso 4: Sostenibilidad y Seguridad (Factor Diferencial)
                             </h4>
                             <p class="text-muted small">SelvaConecta promueve un turismo responsable que proteja la biodiversidad y apoye a las comunidades nativas. Responde estas preguntas para iniciar tu proceso de auditoría.</p>
                         </div>
@@ -273,11 +328,11 @@
                         </div>
                     </div>
 
-                    <!-- STEP 4: DATOS DE PAGO -->
-                    <div class="wizard-step" id="step-4">
+                    <!-- STEP 5: DATOS DE PAGO -->
+                    <div class="wizard-step" id="step-5">
                         <div class="mb-4">
                             <h4 class="font-outfit fw-bold text-dark border-bottom pb-2 mb-3">
-                                <i class="bi bi-wallet2 text-success me-2"></i>Paso 4: Datos de Pago (Finanzas)
+                                <i class="bi bi-wallet2 text-success me-2"></i>Paso 5: Datos de Pago (Finanzas)
                             </h4>
                             <p class="text-muted small">Prometemos un sistema de liquidación de pagos directo y seguro. Los pagos recibidos de los turistas se transferirán a su cuenta o billetera digital seleccionada.</p>
                         </div>
@@ -345,7 +400,7 @@
 
                             <div class="mb-3">
                                 <label for="wallet-phone" class="form-label fw-semibold text-muted small">NÚMERO TELEFÓNICO ASOCIADO</label>
-                                <input type="tel" class="form-control booking-input" id="wallet-phone" placeholder="987654321" pattern="^[9][0-9]{8}$">
+                                <input type="tel" class="form-control booking-input" id="wallet-phone" placeholder="926475463" pattern="^[9][0-9]{8}$">
                                 <div class="invalid-feedback">Ingrese un número de celular de 9 dígitos que inicie con 9.</div>
                             </div>
                         </div>
@@ -368,27 +423,7 @@
                     </div>
 
                 </form>
-                <div class="card bg-light border-0 p-3 mb-4 rounded-3">
-    <h6 class="fw-bold text-success font-outfit"><i class="bi bi-calculator me-2"></i>Modelo de Sostenibilidad (Transparencia Financiera)</h6>
-    <p class="small text-muted mb-2">Por cada reserva completada a través de SelvaConecta, la distribución de ingresos se calcula automáticamente de la siguiente manera:</p>
-    <ul class="small text-dark mb-3">
-        <li><strong>85% de la tarifa:</strong> Va directamente a la comunidad u operador local para financiar el turismo vivencial y la conservación del entorno.</li>
-        <li><strong>15% de la tarifa:</strong> Comisión de SelvaConecta para el mantenimiento técnico de la plataforma y marketing digital del destino.</li>
-    </ul>
-    
-    <div class="bg-white p-2 rounded border border-success-subtle small shadow-sm text-center">
-        Si cobras <strong id="calc-precio-original">S/ 0.00</strong> por adulto: <br>
-        <span class="text-success fw-bold">Tú ganas: S/ <span id="calc-ganancia-operador">0.00</span></span> | 
-        <span class="text-muted">SelvaConecta: S/ <span id="calc-ganancia-plataforma">0.00</span></span>
-    </div>
-</div>
 
-<div class="form-check mb-3 small">
-    <input class="form-check-input" type="checkbox" id="terms-accept" required>
-    <label class="form-check-input-label text-secondary" for="terms-accept">
-        Acepto los Términos de Co-creación Comercial y autorizo la retención del 15% de comisión por pasarela de pago.
-    </label>
-</div>
 
                 <!-- SUCCESS VIEW -->
                 <div class="text-center py-5 d-none" id="wizard-success-view">
@@ -417,7 +452,10 @@
                     <p class="text-muted small mb-4">El equipo de SelvaConecta se comunicará con el representante vía WhatsApp en las próximas 24 horas para completar la auditoría rápida y publicar tu experiencia.</p>
                     
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <a href="https://wa.me/51987654321?text=Hola!%20Acabo%20de%20registrar%20mi%20comunidad%20en%20SelvaConecta%20y%20quisiera%20coordinar%20la%20auditoría." target="_blank" class="btn btn-success rounded-pill px-5 py-2 fw-bold shadow-sm">
+                        <a href="terminos_condiciones_operador.pdf" download class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>Descargar PDF para firmar
+                        </a>
+                        <a href="https://wa.me/51926475463?text=Hola!%20Acabo%20de%20registrar%20mi%20comunidad%20en%20SelvaConecta%20y%20quisiera%20coordinar%20la%20auditoría." target="_blank" class="btn btn-success rounded-pill px-5 py-2 fw-bold shadow-sm">
                             <i class="bi bi-whatsapp me-2"></i>Coordinar por WhatsApp
                         </a>
                         <a href="index.html" class="btn btn-outline-success rounded-pill px-5 py-2 fw-bold">
@@ -467,7 +505,7 @@
 
     
         let currentStep = 1;
-        const totalSteps = 4;
+        const totalSteps = 5;
 
         const inputPrecio = document.getElementById('exp-price-adult');
     
@@ -708,6 +746,19 @@
             
             // Show success view
             successView.classList.remove('d-none');
+
+            // Descarga automática del PDF de Términos y Condiciones para que
+            // el representante de la comunidad/operador lo firme físicamente.
+            try {
+                const pdfLink = document.createElement('a');
+                pdfLink.href = 'terminos_condiciones_operador.pdf';
+                pdfLink.download = `Terminos_Condiciones_SelvaConecta_${(communityName || 'Operador').replace(/[^a-zA-Z0-9]+/g, '_')}.pdf`;
+                document.body.appendChild(pdfLink);
+                pdfLink.click();
+                document.body.removeChild(pdfLink);
+            } catch (e) {
+                console.warn('No se pudo descargar automáticamente el PDF de términos:', e);
+            }
             
             // Save state to local storage to simulate dynamic updates if wanted
             const operatorProfile = {
@@ -776,7 +827,7 @@
         const origShowStep = showStep;
         // Patch btnNext to update preview when going to step 4
         btnNext.addEventListener('click', () => {
-            if (currentStep === 3) setTimeout(updatePreview, 50);
+            if (currentStep === 4) setTimeout(updatePreview, 50);
         }, true);
     });
 </script>
