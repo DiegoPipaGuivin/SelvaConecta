@@ -17,15 +17,20 @@
 <body class="bg-light">
 
 <!-- Navbar Minimal -->
-<nav class="navbar bg-white shadow-sm sticky-top">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modalEquipo" title="Sobre el equipo de SelvaConecta">
             <img src="logo.png" alt="SelvaConecta" class="logo">
             <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
         </a>
-        <a href="index.html" class="btn btn-outline-success rounded-pill px-4">
-            <i class="bi bi-x-lg me-2"></i>Salir
-        </a>
+        <div class="d-flex align-items-center gap-2" id="navbar-buttons-container">
+            <button class="btn btn-success rounded-pill px-3 py-2 small" id="btn-auth-tourist" style="display:none;" onclick="SelvaAuth.abrirModalLogin()">
+                <i class="bi bi-person-fill me-1"></i>Iniciar Sesión
+            </button>
+            <a href="index.html" class="btn btn-outline-success rounded-pill px-4">
+                <i class="bi bi-x-lg me-2"></i>Salir
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -72,6 +77,17 @@
                                 <i class="bi bi-file-earmark-text text-success me-2"></i>Paso 1: Términos y Condiciones de Co-creación Comercial
                             </h4>
                             <p class="text-muted small">Antes de continuar con tu registro, lee y acepta los términos que regulan la relación entre tu comunidad/operación y SelvaConecta.</p>
+                        </div>
+
+                        <!-- AUTHENTICATION BLOCKER -->
+                        <div id="op-auth-blocker" class="alert alert-warning p-4 rounded-4 mb-4 d-none text-start">
+                            <h5 class="fw-bold font-outfit text-warning-emphasis mb-2">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Inicio de Sesión Requerido
+                            </h5>
+                            <p class="small text-muted mb-3">Para registrar tu comunidad u operación local y poder gestionar tus reservas de forma segura, debes iniciar sesión o registrarte en la plataforma antes de avanzar.</p>
+                            <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold text-dark btn-sm" onclick="SelvaAuth.abrirModalLogin()">
+                                Iniciar Sesión / Registrarse
+                            </button>
                         </div>
 
                         <div class="card bg-light border-0 p-3 mb-4 rounded-3">
@@ -151,15 +167,23 @@
                         </div>
 
                         <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="op-dni" class="form-label fw-semibold text-muted small">DNI / PASAPORTE DEL REPRESENTANTE</label>
-                                <input type="text" class="form-control booking-input" id="op-dni" required placeholder="Número de documento de identidad" pattern="^[0-9A-Za-z]{8,15}$">
-                                <div class="invalid-feedback">Ingrese un documento de identidad válido (mínimo 8 caracteres).</div>
+                            <div class="col-md-4">
+                                <label for="op-doc-type" class="form-label fw-semibold text-muted small">TIPO DE DOCUMENTO</label>
+                                <select class="form-select booking-input" id="op-doc-type" required>
+                                    <option value="DNI" selected>DNI (Perú)</option>
+                                    <option value="Pasaporte">Pasaporte</option>
+                                </select>
+                                <div class="invalid-feedback">Por favor, seleccione un tipo de documento.</div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label for="op-dni" class="form-label fw-semibold text-muted small">NÚMERO DE DOCUMENTO</label>
+                                <input type="text" class="form-control booking-input" id="op-dni" required placeholder="Número de documento">
+                                <div class="invalid-feedback" id="op-dni-feedback">Ingrese un DNI válido de 8 dígitos.</div>
+                            </div>
+                            <div class="col-md-4">
                                 <label for="op-phone" class="form-label fw-semibold text-muted small">TELÉFONO / WHATSAPP DE CONTACTO</label>
-                                <input type="tel" class="form-control booking-input" id="op-phone" required placeholder="Ej. +51 987654321" pattern="^[0-9+ \-]{9,15}$">
-                                <div class="invalid-feedback">Ingrese un número de contacto válido.</div>
+                                <input type="tel" class="form-control booking-input" id="op-phone" required placeholder="Ej. +51 987654321">
+                                <div class="invalid-feedback" id="op-phone-feedback">Ingrese un número de contacto válido.</div>
                             </div>
                         </div>
 
@@ -250,8 +274,8 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="exp-price-child" class="form-label fw-semibold text-muted small">PRECIO POR NIÑO (S/)</label>
-                                <input type="number" class="form-control booking-input" id="exp-price-child" min="0" required placeholder="105">
-                                <div class="invalid-feedback">Ingrese un precio válido para niños.</div>
+                                <input type="number" class="form-control booking-input" id="exp-price-child" min="0" required placeholder="Calculado automáticamente" readonly>
+                                <div class="invalid-feedback">Ingrese un precio válido para niños (se calcula automáticamente).</div>
                             </div>
                         </div>
 
@@ -479,137 +503,245 @@
 
 <!-- Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SelvaDB & SelvaAuth (requeridos para validar sesión y guardar historial) -->
+<script src="db.js"></script>
+<script src="auth.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
+        // ─────────────────────────────────────────────────────────────
+        // AUTH BLOCKER: mostrar u ocultar aviso de login en Paso 1
+        // ─────────────────────────────────────────────────────────────
+        const authBlockerEl = document.getElementById('op-auth-blocker');
+
+        function actualizarBlocker() {
+            const estado = SelvaDB.usuarioActual();
+            if (authBlockerEl) {
+                if (estado.isLoggedIn) {
+                    authBlockerEl.classList.add('d-none');
+                } else {
+                    authBlockerEl.classList.remove('d-none');
+                }
+            }
+            // Pre-rellenar campos de Step 2 si hay sesión activa
+            if (estado.isLoggedIn) {
+                const emailInput = document.getElementById('op-email');
+                const phoneInput = document.getElementById('op-phone');
+                if (emailInput && !emailInput.value) emailInput.value = estado.email;
+                if (phoneInput && !phoneInput.value) {
+                    const tel = estado.telefono || '';
+                    // Agregar prefijo +51 si es número local de 9 dígitos
+                    phoneInput.value = /^\d{9}$/.test(tel.replace(/\s/g, ''))
+                        ? '+51 ' + tel.replace(/\s/g, '')
+                        : tel;
+                }
+            }
+        }
+
+        actualizarBlocker();
+        // Re-evaluar si el usuario inicia sesión desde el modal de auth
+        window.addEventListener('storage', actualizarBlocker);
+
+        // ─────────────────────────────────────────────────────────────
+        // VALIDACIÓN DINÁMICA DNI vs PASAPORTE
+        // ─────────────────────────────────────────────────────────────
+        const docTypeSelect = document.getElementById('op-doc-type');
+        const dniInput      = document.getElementById('op-dni');
+        const dniFeedback   = document.getElementById('op-dni-feedback');
+
+        function actualizarValidacionDoc() {
+            if (!docTypeSelect || !dniInput) return;
+            const tipo = docTypeSelect.value;
+            if (tipo === 'DNI') {
+                dniInput.placeholder   = 'Ej. 12345678 (8 dígitos)';
+                dniInput.maxLength     = 8;
+                if (dniFeedback) dniFeedback.textContent = 'El DNI peruano debe tener exactamente 8 dígitos numéricos.';
+            } else {
+                dniInput.placeholder   = 'Ej. AB123456 (6-12 caracteres)';
+                dniInput.maxLength     = 12;
+                if (dniFeedback) dniFeedback.textContent = 'El Pasaporte debe tener entre 6 y 12 caracteres alfanuméricos.';
+            }
+            // Limpiar validación visual al cambiar tipo
+            dniInput.classList.remove('is-invalid', 'is-valid');
+        }
+
+        if (docTypeSelect) {
+            docTypeSelect.addEventListener('change', actualizarValidacionDoc);
+            actualizarValidacionDoc();
+        }
+
+        function validarDocumento() {
+            if (!docTypeSelect || !dniInput) return true;
+            const tipo  = docTypeSelect.value;
+            const valor = dniInput.value.trim();
+            let esValido = false;
+
+            if (tipo === 'DNI') {
+                esValido = /^\d{8}$/.test(valor);
+            } else {
+                esValido = /^[a-zA-Z0-9]{6,12}$/.test(valor);
+            }
+
+            dniInput.classList.toggle('is-invalid', !esValido);
+            dniInput.classList.toggle('is-valid', esValido);
+            return esValido;
+        }
+
+        if (dniInput) dniInput.addEventListener('input', validarDocumento);
+
+        // ─────────────────────────────────────────────────────────────
+        // TELÉFONO: formateo automático con prefijo +51
+        // ─────────────────────────────────────────────────────────────
+        const phoneInput    = document.getElementById('op-phone');
+        const phoneFeedback = document.getElementById('op-phone-feedback');
+
+        function validarTelefono() {
+            if (!phoneInput) return true;
+            let val = phoneInput.value.trim().replace(/\s+/g, '');
+            // Si el usuario escribe 9 dígitos locales, aplicar prefijo automáticamente
+            if (/^\d{9}$/.test(val)) {
+                phoneInput.value = '+51 ' + val;
+                val = '+51' + val;
+            }
+            // Aceptar formato E.164: +51XXXXXXXXX o número de 9 dígitos
+            const esValido = /^(\+51\d{9}|\d{9})$/.test(val.replace(/[\s\-]/g, ''));
+            phoneInput.classList.toggle('is-invalid', !esValido);
+            phoneInput.classList.toggle('is-valid', esValido);
+            if (phoneFeedback) {
+                phoneFeedback.textContent = esValido
+                    ? ''
+                    : 'Ingresa un número válido con prefijo +51 (ej: +51 987654321).';
+            }
+            return esValido;
+        }
+
+        if (phoneInput) phoneInput.addEventListener('blur', validarTelefono);
+
+        // ─────────────────────────────────────────────────────────────
+        // PRECIO NIÑO: descuento 30% automático (read-only)
+        // ─────────────────────────────────────────────────────────────
         const inputPrecioAdulto = document.getElementById('exp-price-adult');
-    const simPrecioBase     = document.getElementById('sim-precio-base');
-    const simGananciaOp     = document.getElementById('sim-ganancia-operador');
-    const simGananciaPlat   = document.getElementById('sim-ganancia-plataforma');
+        const inputPrecioNino   = document.getElementById('exp-price-child');
 
-    if (inputPrecioAdulto) {
-        inputPrecioAdulto.addEventListener('input', () => {
-            const precio = parseFloat(inputPrecioAdulto.value) || 0;
-            
-            // Operaciones matemáticas del split
-            const gananciaOperador   = (precio * 0.85).toFixed(2);
-            const gananciaPlataforma = (precio * 0.15).toFixed(2);
+        if (inputPrecioAdulto && inputPrecioNino) {
+            inputPrecioAdulto.addEventListener('input', () => {
+                const precio = parseFloat(inputPrecioAdulto.value) || 0;
+                inputPrecioNino.value = precio > 0 ? Math.round(precio * 0.70) : '';
+            });
+        }
 
-            // Reflejar cambios instantáneamente en la interfaz
-            if (simPrecioBase)   simPrecioBase.textContent = `S/ ${precio.toFixed(2)}`;
-            if (simGananciaOp)   simGananciaOp.textContent = gananciaOperador;
-            if (simGananciaPlat) simGananciaPlat.textContent = gananciaPlataforma;
-        });
-    }
+        // ─────────────────────────────────────────────────────────────
+        // SIMULADOR DE GANANCIAS (85%/15%) en el panel de Step 1
+        // ─────────────────────────────────────────────────────────────
+        const simPrecioBase   = document.getElementById('sim-precio-base');
+        const simGananciaOp   = document.getElementById('sim-ganancia-operador');
+        const simGananciaPlat = document.getElementById('sim-ganancia-plataforma');
 
-    
-        let currentStep = 1;
-        const totalSteps = 5;
+        if (inputPrecioAdulto) {
+            inputPrecioAdulto.addEventListener('input', () => {
+                const precio = parseFloat(inputPrecioAdulto.value) || 0;
+                if (simPrecioBase)   simPrecioBase.textContent   = `S/ ${precio.toFixed(2)}`;
+                if (simGananciaOp)   simGananciaOp.textContent   = (precio * 0.85).toFixed(2);
+                if (simGananciaPlat) simGananciaPlat.textContent = (precio * 0.15).toFixed(2);
+            });
+        }
 
-        const inputPrecio = document.getElementById('exp-price-adult');
-    
-    // Elementos del simulador
-    const txtPrecioOriginal = document.getElementById('calc-precio-original');
-    const txtGananciaOperador = document.getElementById('calc-ganancia-operador');
-    const txtGananciaPlataforma = document.getElementById('calc-ganancia-plataforma');
+        // ─────────────────────────────────────────────────────────────
+        // WIZARD NAVIGATION
+        // ─────────────────────────────────────────────────────────────
+        let currentStep    = 1;
+        const totalSteps   = 5;
 
-    if (inputPrecio) {
-        inputPrecio.addEventListener('input', () => {
-            const precio = parseFloat(inputPrecio.value) || 0;
-            
-            // Cálculos del modelo de negocio (85% / 15%)
-            const gananciaOperador = (precio * 0.85).toFixed(2);
-            const gananciaPlataforma = (precio * 0.15).toFixed(2);
-
-            // Inyectar valores en la interfaz en tiempo real
-            if (txtPrecioOriginal) txtPrecioOriginal.textContent = `S/ ${precio.toFixed(2)}`;
-            if (txtGananciaOperador) txtGananciaOperador.textContent = gananciaOperador;
-            if (txtGananciaPlataforma) txtGananciaPlataforma.textContent = gananciaPlataforma;
-        });
-        
-    }
-    
-    
-        
-        const btnPrev = document.getElementById('btn-prev-step');
-        const btnNext = document.getElementById('btn-next-step');
-        const wizardForm = document.getElementById('operator-wizard-form');
+        const btnPrev     = document.getElementById('btn-prev-step');
+        const btnNext     = document.getElementById('btn-next-step');
+        const wizardForm  = document.getElementById('operator-wizard-form');
         const successView = document.getElementById('wizard-success-view');
-        
-        // Payment configuration toggles
-        const payBank = document.getElementById('pay-bank');
-        const payDigital = document.getElementById('pay-digital');
-        const bankFields = document.getElementById('payment-bank-fields');
-        const digitalFields = document.getElementById('payment-digital-fields');
-        
-        const bankName = document.getElementById('bank-name');
-        const bankAccount = document.getElementById('bank-account');
-        const walletType = document.getElementById('wallet-type');
-        const walletPhone = document.getElementById('wallet-phone');
-        const bankOwner = document.getElementById('bank-owner');
+
+        // Payment toggles
+        const payBank      = document.getElementById('pay-bank');
+        const payDigital   = document.getElementById('pay-digital');
+        const bankFields   = document.getElementById('payment-bank-fields');
+        const digitalFields= document.getElementById('payment-digital-fields');
+        const bankName     = document.getElementById('bank-name');
+        const bankAccount  = document.getElementById('bank-account');
+        const walletType   = document.getElementById('wallet-type');
+        const walletPhone  = document.getElementById('wallet-phone');
+        const bankOwner    = document.getElementById('bank-owner');
 
         if (payBank && payDigital && bankFields && digitalFields) {
             payBank.addEventListener('change', () => {
                 bankFields.classList.remove('d-none');
                 digitalFields.classList.add('d-none');
-                
-                // Toggle required fields
-                bankName.required = true;
-                bankAccount.required = true;
-                walletPhone.required = false;
+                if (bankName)    bankName.required    = true;
+                if (bankAccount) bankAccount.required = true;
+                if (walletPhone) walletPhone.required = false;
             });
             payDigital.addEventListener('change', () => {
                 bankFields.classList.add('d-none');
                 digitalFields.classList.remove('d-none');
-                
-                // Toggle required fields
-                bankName.required = false;
-                bankAccount.required = false;
-                walletPhone.required = true;
+                if (bankName)    bankName.required    = false;
+                if (bankAccount) bankAccount.required = false;
+                if (walletPhone) walletPhone.required = true;
             });
         }
-        
-        // Initial payment required state
+
         if (bankName && bankAccount) {
-            bankName.required = true;
+            bankName.required    = true;
             bankAccount.required = true;
         }
 
-        // Photo Upload simulation
-        const dragZone = document.getElementById('photo-drag-zone');
-        const fileInput = document.getElementById('photo-file-input');
-        const previewsContainer = document.getElementById('photo-previews');
-        
+        // ─────────────────────────────────────────────────────────────
+        // CCI FORMATTING: xxx-xxx-xxxxxxxxxxxx-xx
+        // ─────────────────────────────────────────────────────────────
+        if (bankAccount) {
+            bankAccount.addEventListener('input', function () {
+                let v = this.value.replace(/\D/g, '').substring(0, 20);
+                let fmt = '';
+                if (v.length > 0)  fmt  = v.substring(0, 3);
+                if (v.length > 3)  fmt += '-' + v.substring(3, 6);
+                if (v.length > 6)  fmt += '-' + v.substring(6, 18);
+                if (v.length > 18) fmt += '-' + v.substring(18, 20);
+                this.value = fmt;
+            });
+        }
+
+        // WALLET PHONE: solo 9 dígitos que empiezen con 9
+        if (walletPhone) {
+            walletPhone.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').substring(0, 9);
+            });
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // PHOTO UPLOAD
+        // ─────────────────────────────────────────────────────────────
+        const dragZone         = document.getElementById('photo-drag-zone');
+        const fileInput        = document.getElementById('photo-file-input');
+        const previewsContainer= document.getElementById('photo-previews');
+
         if (dragZone && fileInput && previewsContainer) {
             dragZone.addEventListener('click', () => fileInput.click());
-            
-            // Drag and drop events
             dragZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                dragZone.style.borderColor = 'var(--primary)';
+                dragZone.style.borderColor     = 'var(--primary)';
                 dragZone.style.backgroundColor = 'rgba(10, 92, 54, 0.08)';
             });
-            
             dragZone.addEventListener('dragleave', () => {
-                dragZone.style.borderColor = 'rgba(10, 92, 54, 0.3)';
+                dragZone.style.borderColor     = 'rgba(10, 92, 54, 0.3)';
                 dragZone.style.backgroundColor = 'var(--primary-light)';
             });
-            
             dragZone.addEventListener('drop', (e) => {
                 e.preventDefault();
-                dragZone.style.borderColor = 'rgba(10, 92, 54, 0.3)';
+                dragZone.style.borderColor     = 'rgba(10, 92, 54, 0.3)';
                 dragZone.style.backgroundColor = 'var(--primary-light)';
                 if (e.dataTransfer.files.length) {
                     fileInput.files = e.dataTransfer.files;
                     handleFiles(e.dataTransfer.files);
                 }
             });
-            
             fileInput.addEventListener('change', () => {
-                if (fileInput.files.length) {
-                    handleFiles(fileInput.files);
-                }
+                if (fileInput.files.length) handleFiles(fileInput.files);
             });
         }
 
@@ -629,7 +761,9 @@
             });
         }
 
-        // Wizard navigation logic
+        // ─────────────────────────────────────────────────────────────
+        // NAVIGATION CLICK
+        // ─────────────────────────────────────────────────────────────
         if (btnNext && btnPrev) {
             btnNext.addEventListener('click', () => {
                 if (validateStep(currentStep)) {
@@ -637,7 +771,6 @@
                         currentStep++;
                         showStep(currentStep);
                     } else {
-                        // Submit form / Finish
                         finishWizard();
                     }
                 }
@@ -651,48 +784,54 @@
             });
         }
 
+        // ─────────────────────────────────────────────────────────────
+        // SHOW STEP
+        // ─────────────────────────────────────────────────────────────
         function showStep(step) {
             document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${step}`).classList.add('active');
 
-            // Update step indicator progress line
             const progressBar = document.getElementById('step-progress-bar');
             const percent = ((step - 1) / (totalSteps - 1)) * 100;
             progressBar.style.width = `${percent}%`;
 
-            // Update step dots
             for (let i = 1; i <= totalSteps; i++) {
                 const dot = document.getElementById(`dot-${i}`);
                 if (i < step) {
-                    dot.classList.add('completed');
-                    dot.classList.remove('active');
+                    dot.classList.add('completed'); dot.classList.remove('active');
                 } else if (i === step) {
-                    dot.classList.add('active');
-                    dot.classList.remove('completed');
+                    dot.classList.add('active');    dot.classList.remove('completed');
                 } else {
                     dot.classList.remove('active', 'completed');
                 }
             }
 
-            // Show/Hide Previous Button
-            if (step === 1) {
-                btnPrev.classList.add('d-none');
-            } else {
-                btnPrev.classList.remove('d-none');
-            }
+            btnPrev.classList.toggle('d-none', step === 1);
+            btnNext.innerHTML = step === totalSteps
+                ? 'Confirmar Registro <i class="bi bi-check-lg ms-2"></i>'
+                : 'Siguiente <i class="bi bi-arrow-right ms-2"></i>';
 
-            // Change Next Button Text on last step
-            if (step === totalSteps) {
-                btnNext.innerHTML = 'Confirmar Registro <i class="bi bi-check-lg ms-2"></i>';
-            } else {
-                btnNext.innerHTML = 'Siguiente <i class="bi bi-arrow-right ms-2"></i>';
-            }
-
-            // Scroll to wizard top
             document.querySelector('.step-indicator').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Pre-popular campos de Step 2 al navegar hacia él
+            if (step === 2) actualizarBlocker();
+            // Actualizar preview al llegar a Step 5
+            if (step === 5) updatePreview();
         }
 
+        // ─────────────────────────────────────────────────────────────
+        // VALIDATE STEP (con validaciones personalizadas por paso)
+        // ─────────────────────────────────────────────────────────────
         function validateStep(step) {
+            // Paso 1: verificar que el usuario haya iniciado sesión
+            if (step === 1) {
+                if (!SelvaDB.usuarioActual().isLoggedIn) {
+                    authBlockerEl && authBlockerEl.classList.remove('d-none');
+                    authBlockerEl && authBlockerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+
             const stepContainer = document.getElementById(`step-${step}`);
             const inputs = stepContainer.querySelectorAll('input[required], select[required], textarea[required]');
             let stepValid = true;
@@ -700,11 +839,11 @@
             inputs.forEach(input => {
                 input.classList.remove('is-invalid');
                 let valid = input.checkValidity();
-                
-                // Custom checkbox check in Step 3
-                if (input.type === 'checkbox' && !input.checked) {
-                    valid = false;
-                }
+
+                if (input.type === 'checkbox' && !input.checked) valid = false;
+
+                // Skip readonly inputs (e.g. exp-price-child)
+                if (input.readOnly) valid = true;
 
                 if (!valid) {
                     input.classList.add('is-invalid');
@@ -712,69 +851,111 @@
                 }
             });
 
+            // Paso 2: validaciones personalizadas de documento e identidad
+            if (step === 2) {
+                if (!validarDocumento()) stepValid = false;
+                if (!validarTelefono())  stepValid = false;
+            }
+
+            // Paso 5: validar CCI (20 dígitos) o teléfono de billetera (9 dígitos con 9)
+            if (step === 5) {
+                if (payBank && payBank.checked && bankAccount) {
+                    const rawCCI = bankAccount.value.replace(/\D/g, '');
+                    if (rawCCI.length !== 20) {
+                        bankAccount.classList.add('is-invalid');
+                        stepValid = false;
+                    } else {
+                        bankAccount.classList.remove('is-invalid');
+                    }
+                }
+                if (payDigital && payDigital.checked && walletPhone) {
+                    const rawPhone = walletPhone.value.replace(/\D/g, '');
+                    if (!/^9\d{8}$/.test(rawPhone)) {
+                        walletPhone.classList.add('is-invalid');
+                        stepValid = false;
+                    } else {
+                        walletPhone.classList.remove('is-invalid');
+                    }
+                }
+            }
+
             return stepValid;
         }
 
+        // ─────────────────────────────────────────────────────────────
+        // FINISH WIZARD + HISTORIAL EN SelvaDB
+        // ─────────────────────────────────────────────────────────────
         function finishWizard() {
-            // Read details
             const communityName = document.getElementById('op-razon-social').value;
-            const repName = document.getElementById('op-representante').value;
-            const location = document.getElementById('op-ubicacion').value;
-            const tourTitle = document.getElementById('exp-title').value;
-            const priceAdult = document.getElementById('exp-price-adult').value;
-            const priceChild = document.getElementById('exp-price-child').value;
-            
+            const repName       = document.getElementById('op-representante').value;
+            const location      = document.getElementById('op-ubicacion').value;
+            const tourTitle     = document.getElementById('exp-title').value;
+            const priceAdult    = document.getElementById('exp-price-adult').value;
+            const priceChild    = document.getElementById('exp-price-child').value;
+            const docTipo       = docTypeSelect ? docTypeSelect.value : 'DNI';
+            const docNum        = dniInput      ? dniInput.value.trim() : '';
+
             let paymentStr = '';
-            if (payBank.checked) {
-                paymentStr = `Depósito CCI ${bankName.value} (Titular: ${bankOwner.value})`;
+            if (payBank && payBank.checked) {
+                paymentStr = `CCI ${bankName ? bankName.value : ''} — ${bankAccount ? bankAccount.value : ''} (Titular: ${bankOwner ? bankOwner.value : ''})`;
             } else {
-                paymentStr = `${walletType.value} a celular ${walletPhone.value} (Titular: ${bankOwner.value})`;
+                paymentStr = `${walletType ? walletType.value : 'Yape'} al ${walletPhone ? walletPhone.value : ''} (Titular: ${bankOwner ? bankOwner.value : ''})`;
             }
 
-            // Set success UI fields
-            document.getElementById('success-community-name').textContent = communityName;
-            document.getElementById('success-rep-name').textContent = repName;
-            document.getElementById('success-loc').textContent = location;
-            document.getElementById('success-title').textContent = tourTitle;
-            document.getElementById('success-prices').textContent = `S/${priceAdult} Adulto | S/${priceChild} Niño`;
-            document.getElementById('success-pay').textContent = paymentStr;
+            // Código único de operador
+            const codigoOp = 'OP-' + Math.floor(100000 + Math.random() * 900000);
 
-            // Hide form and navigation controls
+            // Poblar vista de éxito
+            document.getElementById('success-community-name').textContent = communityName;
+            document.getElementById('success-rep-name').textContent       = repName;
+            document.getElementById('success-loc').textContent            = location;
+            document.getElementById('success-title').textContent          = tourTitle;
+            document.getElementById('success-prices').textContent         = `S/${priceAdult} Adulto | S/${priceChild} Niño`;
+            document.getElementById('success-pay').textContent            = paymentStr;
+
+            // Ocultar form / mostrar éxito
             wizardForm.classList.add('d-none');
             document.getElementById('wizard-navigation').classList.add('d-none');
             document.querySelector('.step-indicator').classList.add('d-none');
-            
-            // Show success view
             successView.classList.remove('d-none');
 
-            // Descarga automática del PDF de Términos y Condiciones para que
-            // el representante de la comunidad/operador lo firme físicamente.
+            // Guardar en historial de operadores (SelvaDB)
+            const registroOperador = {
+                codigo:         codigoOp,
+                comunidad:      communityName,
+                representante:  repName,
+                email:          SelvaDB.usuarioActual().email,
+                telefono:       phoneInput ? phoneInput.value : '',
+                documentoTipo:  docTipo,
+                documentoNum:   docNum,
+                ubicacion:      location,
+                experiencia:    tourTitle,
+                capacidad:      document.getElementById('exp-capacity').value,
+                precioAdulto:   priceAdult,
+                precioNino:     priceChild,
+                metodoPago:     payBank && payBank.checked ? 'Cuenta Bancaria/CCI' : 'Billetera Digital',
+                detallesPago:   paymentStr,
+                estado:         'En Auditoría',
+                fechaRegistro:  new Date().toLocaleString('es-PE')
+            };
+            SelvaDB.agregarHistorialOperador(registroOperador);
+
+            // Descarga automática del PDF de T&C
             try {
                 const pdfLink = document.createElement('a');
-                pdfLink.href = 'terminos_condiciones_operador.pdf';
-                pdfLink.download = `Terminos_Condiciones_SelvaConecta_${(communityName || 'Operador').replace(/[^a-zA-Z0-9]+/g, '_')}.pdf`;
+                pdfLink.href     = 'terminos_condiciones_operador.pdf';
+                pdfLink.download = `Terminos_SelvaConecta_${(communityName || 'Operador').replace(/[^a-zA-Z0-9]+/g, '_')}.pdf`;
                 document.body.appendChild(pdfLink);
                 pdfLink.click();
                 document.body.removeChild(pdfLink);
             } catch (e) {
-                console.warn('No se pudo descargar automáticamente el PDF de términos:', e);
+                console.warn('No se pudo descargar el PDF de términos:', e);
             }
-            
-            // Save state to local storage to simulate dynamic updates if wanted
-            const operatorProfile = {
-                communityName,
-                repName,
-                location,
-                tourTitle,
-                priceAdult,
-                priceChild,
-                paymentStr
-            };
-            localStorage.setItem('registeredOperator', JSON.stringify(operatorProfile));
         }
 
-        // Directorio referencial de comunidades/organizaciones indígenas y sus líderes actuales
-        // (información pública recopilada de fuentes periodísticas y de las propias organizaciones).
+        // ─────────────────────────────────────────────────────────────
+        // AUTOCOMPLETAR REPRESENTANTE según comunidad seleccionada
+        // ─────────────────────────────────────────────────────────────
         const lideresPorComunidad = {
             "ORPIO (Organización Regional de Pueblos Indígenas del Oriente) - Loreto": "Beltrán Sandi Tuituy (Presidente de ORPIO)",
             "Federación Huaynakana Kamatahuara Kana - Pueblo Kukama, Nauta (Loreto)": "Mari Luz Canaquiri Murayari (Presidenta)",
@@ -784,33 +965,31 @@
             "FENACOKA (Federación Nativa de Comunidades Kakataibo) - Ucayali": "Marcelo Odicio Estrella (Apu / Presidente de FENACOKA)"
         };
 
-        const selectComunidad = document.getElementById('op-razon-social');
+        const selectComunidad    = document.getElementById('op-razon-social');
         const inputRepresentante = document.getElementById('op-representante');
-        const ayudaComunidad = document.getElementById('op-razon-social-help');
+        const ayudaComunidad     = document.getElementById('op-razon-social-help');
 
         if (selectComunidad && inputRepresentante) {
             selectComunidad.addEventListener('change', () => {
-                const seleccion = selectComunidad.value;
-
-                if (seleccion === 'Otra') {
+                const sel = selectComunidad.value;
+                if (sel === 'Otra') {
                     inputRepresentante.value = '';
                     if (ayudaComunidad) ayudaComunidad.style.display = 'block';
                 } else {
-                    inputRepresentante.value = lideresPorComunidad[seleccion] || '';
+                    inputRepresentante.value = lideresPorComunidad[sel] || '';
                     if (ayudaComunidad) ayudaComunidad.style.display = 'none';
                 }
             });
         }
 
-        // Initialize progress line
-        showStep(1);
-
-        // Live preview updater for step 4
+        // ─────────────────────────────────────────────────────────────
+        // LIVE PREVIEW en Step 5
+        // ─────────────────────────────────────────────────────────────
         function updatePreview() {
             const community = document.getElementById('op-razon-social').value || '—';
-            const tour = document.getElementById('exp-title').value || '—';
-            const price = document.getElementById('exp-price-adult').value;
-            const location = document.getElementById('op-ubicacion').value || '—';
+            const tour      = document.getElementById('exp-title').value       || '—';
+            const price     = document.getElementById('exp-price-adult').value;
+            const location  = document.getElementById('op-ubicacion').value    || '—';
 
             const pC = document.getElementById('preview-community');
             const pT = document.getElementById('preview-tour');
@@ -823,14 +1002,11 @@
             if (pL) pL.textContent = location;
         }
 
-        // Update preview whenever step 4 is shown
-        const origShowStep = showStep;
-        // Patch btnNext to update preview when going to step 4
-        btnNext.addEventListener('click', () => {
-            if (currentStep === 4) setTimeout(updatePreview, 50);
-        }, true);
+        // Inicializar wizard
+        showStep(1);
     });
 </script>
+
 
 <!-- Modal: Equipo / Acerca de SelvaConecta -->
 <div class="modal fade" id="modalEquipo" tabindex="-1" aria-labelledby="modalEquipoLabel" aria-hidden="true">

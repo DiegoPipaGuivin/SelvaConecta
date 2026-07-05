@@ -138,6 +138,16 @@ const SelvaDB = (function () {
         };
     }
 
+    function obtenerHistorialOperadores() {
+        return JSON.parse(localStorage.getItem('sc_historial_operadores')) || [];
+    }
+
+    function agregarHistorialOperador(op) {
+        const ops = obtenerHistorialOperadores();
+        ops.push(op);
+        localStorage.setItem('sc_historial_operadores', JSON.stringify(ops));
+    }
+
     return {
         obtenerReservas,
         agregarReserva,
@@ -147,6 +157,8 @@ const SelvaDB = (function () {
         validarLogin,
         iniciarSesion,
         cerrarSesion,
-        usuarioActual
+        usuarioActual,
+        obtenerHistorialOperadores,
+        agregarHistorialOperador
     };
 })();

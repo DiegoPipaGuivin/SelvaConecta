@@ -194,6 +194,34 @@ function(){
     // Initial price calculation
     updatePricing();
 
+    // --- CAMPO DE NOMBRE EN COMENTARIOS ---
+    // Estas referencias y la función que las usa se declaran ANTES de
+    // updateNavbarAuth() a propósito: al ser "const"/"function" del mismo
+    // scope, si updateNavbarAuth() (que se llama de inmediato, más abajo)
+    // intentaba usar actualizarCampoNombre() antes de que "nameInput"
+    // existiera, JavaScript lanzaba un ReferenceError ("Cannot access
+    // 'nameInput' before initialization") por estar en su Temporal Dead
+    // Zone. Ese error interrumpía TODA la ejecución del DOMContentLoaded,
+    // y por eso nunca se llegaba a registrar el listener del formulario de
+    // reserva (el botón "Reservar Experiencia" no hacía nada) ni se
+    // guardaba la reserva en el historial.
+    const commentForm = document.getElementById('comment-form');
+    const nameInput = document.getElementById('comment-author-name');
+    const textInput = document.getElementById('comment-text');
+
+    // --- Auto-populate user name in the readonly field when logged in ---
+    function actualizarCampoNombre() {
+        if (!nameInput) return;
+        const estado = SelvaDB.usuarioActual();
+        if (estado.isLoggedIn) {
+            nameInput.value = estado.nombre || 'Turista';
+            nameInput.placeholder = estado.nombre || 'Turista';
+        } else {
+            nameInput.value = '';
+            nameInput.placeholder = 'Inicia sesión para opinar';
+        }
+    }
+
     // --- NAVBAR AUTH SYNC ---
     // El modal global de login/registro y el pintado del navbar ahora viven
     // en auth.js (SelvaAuth), compartido por todas las páginas. Aquí solo
@@ -201,6 +229,9 @@ function(){
     // abajo en este archivo.
     function updateNavbarAuth() {
         SelvaAuth.actualizarNavbar();
+        if (typeof actualizarCampoNombre === 'function') {
+            actualizarCampoNombre();
+        }
     }
 
     // Initialize Navbar Auth state
@@ -273,12 +304,18 @@ function(){
                             </div>
                             <div class="modal-body p-4">
                                 <p class="text-muted">Por favor, confirma los detalles de tu reserva antes de enviarla al operador:</p>
-                                <div class="bg-light p-3 rounded-3 mb-4">
+                                <div class="bg-light p-3 rounded-3 mb-3">
                                     <div class="mb-2"><strong>Experiencia:</strong> <span class="text-dark fw-semibold" id="confirm-exp-title"></span></div>
                                     <div class="mb-2"><strong>Fecha del Viaje:</strong> <span class="text-dark" id="confirm-exp-date"></span></div>
                                     <div class="mb-2"><strong>Viajeros:</strong> <span class="text-dark" id="confirm-exp-travelers"></span></div>
                                     <div class="mb-0"><strong>Total Estimado:</strong> <span class="text-success fw-bold fs-5" id="confirm-exp-total"></span></div>
                                 </div>
+                                
+                                <div id="travelers-details-container" class="mt-3 mb-4 border-top pt-3 d-none">
+                                    <h6 class="fw-bold text-success font-outfit mb-2"><i class="bi bi-people-fill me-1"></i>Información de Acompañantes</h6>
+                                    <div id="travelers-dynamic-inputs" style="max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
+                                </div>
+
                                 <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-outline-secondary rounded-pill w-50" data-bs-dismiss="modal">Cancelar</button>
                                     <button type="button" class="btn btn-success rounded-pill w-50 fw-bold" id="btn-submit-confirm-booking">Confirmar Reserva</button>
@@ -298,6 +335,56 @@ function(){
         document.getElementById('confirm-exp-travelers').textContent = `${pricingInfo.adultsCount} Adulto(s) ${pricingInfo.childrenCount > 0 ? ', ' + pricingInfo.childrenCount + ' Niño(s)' : ''}`;
         document.getElementById('confirm-exp-total').textContent = `S/${pricingInfo.total}`;
 
+        // Dynamic travelers input fields rendering
+        const travelersContainer = document.getElementById('travelers-details-container');
+        const travelersInputs = document.getElementById('travelers-dynamic-inputs');
+        if (travelersContainer && travelersInputs) {
+            travelersInputs.innerHTML = '';
+            
+            // Additional adults
+            for (let i = 1; i < pricingInfo.adultsCount; i++) {
+                travelersInputs.innerHTML += `
+                    <div class="card bg-light border-0 p-2 mb-2 traveler-card" data-type="Adulto">
+                        <div class="fw-bold small text-muted mb-1">Acompañante Adulto ${i}</div>
+                        <div class="row g-2">
+                            <div class="col-7">
+                                <input type="text" class="form-control form-control-sm traveler-name" placeholder="Nombre completo" required>
+                            </div>
+                            <div class="col-5">
+                                <input type="text" class="form-control form-control-sm traveler-doc" placeholder="DNI / Pasaporte" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Children
+            for (let i = 1; i <= pricingInfo.childrenCount; i++) {
+                travelersInputs.innerHTML += `
+                    <div class="card bg-light border-0 p-2 mb-2 traveler-card" data-type="Niño">
+                        <div class="fw-bold small text-muted mb-1">Acompañante Niño ${i}</div>
+                        <div class="row g-2">
+                            <div class="col-5">
+                                <input type="text" class="form-control form-control-sm traveler-name" placeholder="Nombre completo" required>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control form-control-sm traveler-doc" placeholder="DNI / Pasaporte" required>
+                            </div>
+                            <div class="col-3">
+                                <input type="number" class="form-control form-control-sm traveler-age" placeholder="Edad" min="0" max="17" required>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (pricingInfo.adultsCount > 1 || pricingInfo.childrenCount > 0) {
+                travelersContainer.classList.remove('d-none');
+            } else {
+                travelersContainer.classList.add('d-none');
+            }
+        }
+
         const bootstrapModal = new bootstrap.Modal(confirmModal);
         bootstrapModal.show();
 
@@ -308,6 +395,60 @@ function(){
         btnConfirmSubmit.parentNode.replaceChild(newBtnConfirmSubmit, btnConfirmSubmit);
 
         newBtnConfirmSubmit.addEventListener('click', () => {
+            // Validate companion fields if visible
+            if (pricingInfo.adultsCount > 1 || pricingInfo.childrenCount > 0) {
+                const names = Array.from(travelersInputs.querySelectorAll('.traveler-name'));
+                const docs = Array.from(travelersInputs.querySelectorAll('.traveler-doc'));
+                const ages = Array.from(travelersInputs.querySelectorAll('.traveler-age'));
+                
+                let allValid = true;
+                names.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        allValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                docs.forEach(input => {
+                    if (!input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        allValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                ages.forEach(input => {
+                    const val = parseInt(input.value);
+                    if (isNaN(val) || val < 0 || val > 17) {
+                        input.classList.add('is-invalid');
+                        allValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!allValid) {
+                    alert('Por favor, completa la información básica de todos los acompañantes.');
+                    return;
+                }
+
+                // Extract travelers details
+                const companions = [];
+                const cards = travelersInputs.querySelectorAll('.traveler-card');
+                cards.forEach(card => {
+                    const name = card.querySelector('.traveler-name').value.trim();
+                    const doc = card.querySelector('.traveler-doc').value.trim();
+                    const ageEl = card.querySelector('.traveler-age');
+                    const age = ageEl ? parseInt(ageEl.value) : null;
+                    const type = card.getAttribute('data-type');
+                    companions.push({ nombre: name, documento: doc, edad: age, tipo: type });
+                });
+                pricingInfo.travelersDetails = companions;
+            } else {
+                pricingInfo.travelersDetails = [];
+            }
+
             bootstrapModal.hide();
             openPaymentModal(pricingInfo);
         });
@@ -378,22 +519,29 @@ function(){
             // Tab Toggle
             const tabReg = document.getElementById('modal-tab-reg');
             const tabLog = document.getElementById('modal-tab-login');
-            const regForm = document.getElementById('modal-reg-form');
-            const logForm = document.getElementById('modal-login-form');
             
             tabReg.addEventListener('click', () => {
                 tabReg.classList.add('active');
                 tabLog.classList.remove('active');
-                regForm.classList.remove('d-none');
-                logForm.classList.add('d-none');
+                document.getElementById('modal-reg-form').classList.remove('d-none');
+                document.getElementById('modal-login-form').classList.add('d-none');
             });
             
             tabLog.addEventListener('click', () => {
                 tabLog.classList.add('active');
                 tabReg.classList.remove('active');
-                logForm.classList.remove('d-none');
-                regForm.classList.add('d-none');
+                document.getElementById('modal-login-form').classList.remove('d-none');
+                document.getElementById('modal-reg-form').classList.add('d-none');
             });
+        }
+
+        // Forzar SIEMPRE el estado inicial "Registrarse" al abrir el modal,
+        // sin importar en qué pestaña haya quedado la vez anterior.
+        const mTabReg = document.getElementById('modal-tab-reg');
+        const mTabLog = document.getElementById('modal-tab-login');
+        if (mTabReg && mTabLog) {
+            mTabReg.classList.add('active');
+            mTabLog.classList.remove('active');
         }
 
         const bootstrapModal = new bootstrap.Modal(authModal);
@@ -405,6 +553,10 @@ function(){
         // Reset forms
         mRegForm.reset();
         mLogForm.reset();
+
+        // Mostrar siempre el formulario de Registro por defecto y ocultar el de Login
+        mRegForm.classList.remove('d-none');
+        mLogForm.classList.add('d-none');
 
         // Remove old listeners by replacing forms
         const newMRegForm = mRegForm.cloneNode(true);
@@ -664,7 +816,7 @@ function(){
             }
             document.getElementById('yape-code-error').style.display = 'none';
             bsPayModal.hide();
-            completeBooking(pricingInfo.adultsCount, pricingInfo.childrenCount, `S/${pricingInfo.total}`, `Yape (Op: ${code})`);
+            completeBooking(pricingInfo.adultsCount, pricingInfo.childrenCount, `S/${pricingInfo.total}`, `Yape (Op: ${code})`, pricingInfo.travelersDetails);
         });
 
         // Card pay
@@ -707,28 +859,29 @@ function(){
             const brand = num.startsWith('4') ? 'Visa' : (num[0] === '5' || num[0] === '2') ? 'Mastercard' : 'Tarjeta';
             const masked = '**** **** **** ' + num.slice(-4);
             bsPayModal.hide();
-            completeBooking(pricingInfo.adultsCount, pricingInfo.childrenCount, `S/${pricingInfo.total}`, `${brand} (${masked})`);
+            completeBooking(pricingInfo.adultsCount, pricingInfo.childrenCount, `S/${pricingInfo.total}`, `${brand} (${masked})`, pricingInfo.travelersDetails);
         });
     }
 
-    function completeBooking(adults, children, totalStr, paymentMethod) {
+    function completeBooking(adults, children, totalStr, paymentMethod, companions) {
         // Generate Booking Reference Number
         const bookingRef = 'SC-' + Math.floor(100000 + Math.random() * 900000);
 
         const nuevaReserva = {
-    codigo: bookingRef,
-    experiencia: exp.title,
-    fecha: dateInput.value,
-    adultos: adults,
-    ninos: children,
-    total: totalStr,
-    usuario: localStorage.getItem('touristEmail'),
-    estado: 'Confirmada',
-    metodoPago: paymentMethod || 'No especificado',
-    fechaRegistro: new Date().toLocaleString()
-};
+            codigo: bookingRef,
+            experiencia: exp.title,
+            fecha: dateInput.value,
+            adultos: adults,
+            ninos: children,
+            total: totalStr,
+            usuario: localStorage.getItem('touristEmail'),
+            estado: 'Confirmada',
+            metodoPago: paymentMethod || 'No especificado',
+            fechaRegistro: new Date().toLocaleString(),
+            acompanantes: companions || []
+        };
 
-SelvaDB.agregarReserva(nuevaReserva);
+        SelvaDB.agregarReserva(nuevaReserva);
         
         // Show Success View
         bookingFields.classList.add('d-none');
@@ -897,98 +1050,95 @@ function escapeHTML(str) {
     renderComments();
     updateRatingsStats();
 
-    // Comment Form Submission
-    const commentForm = document.getElementById('comment-form');
+    // Comment Form Submission (commentForm/nameInput/textInput y
+    // actualizarCampoNombre ya se declararon arriba, antes de
+    // updateNavbarAuth(); ver comentario en esa sección)
+    actualizarCampoNombre();
+    // Re-check after potential login/logout events triggered elsewhere
+    window.addEventListener('storage', actualizarCampoNombre);
+
     if (commentForm) {
-        // --- NUEVO: Interactividad para colorear las estrellas del Guía ---
-    document.querySelectorAll('.rating-stars-guide label').forEach(label => {
-        label.addEventListener('click', function() {
-            const selectedInput = document.getElementById(this.getAttribute('for'));
-            if (!selectedInput) return;
-            const val = parseInt(selectedInput.value);
-            
-            document.querySelectorAll('.rating-stars-guide label').forEach(l => {
-                const currentInput = document.getElementById(l.getAttribute('for'));
-                if (currentInput && parseInt(currentInput.value) <= val) {
-                    l.classList.remove('bi-star');
-                    l.classList.add('bi-star-fill');
-                } else if (currentInput) {
-                    l.classList.remove('bi-star-fill');
-                    l.classList.add('bi-star');
-                }
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // 1. Validate login
+            const emailUsuario = localStorage.getItem('touristEmail') || '';
+            const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
+
+            if (!isLoggedIn) {
+                alert('Debes iniciar sesión para dejar una opinión.');
+                return;
+            }
+
+            // 2. Validate reservation exists for this experience and is not cancelled
+            const reservas = JSON.parse(localStorage.getItem('sc_reservas')) || [];
+            const reservasExperiencia = reservas.filter(r =>
+                r.usuario === emailUsuario &&
+                r.experiencia === exp.title &&
+                r.estado !== 'Cancelada'
+            );
+
+            if (reservasExperiencia.length === 0) {
+                alert(`Aún no puedes comentar. Debes tener una reserva confirmada para "${exp.title}".`);
+                return;
+            }
+
+            // 3. Date-gating: at least one reservation date must be in the past
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const tieneReservaPasada = reservasExperiencia.some(r => {
+                const fechaReserva = new Date(r.fecha + 'T00:00:00');
+                return fechaReserva < hoy;
             });
-        });
-    });
 
-if (commentForm) {
-    commentForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Evita que la página se recargue
+            if (!tieneReservaPasada) {
+                alert('Aún no puedes comentar. Solo puedes opinar después de que haya pasado la fecha de tu experiencia reservada.');
+                return;
+            }
 
-        // 1. Validar si el usuario ha iniciado sesión
-        const emailUsuario = localStorage.getItem('touristEmail') || '';
-        const isLoggedIn = localStorage.getItem('touristLoggedIn') === 'true';
+            // 4. Validate star ratings
+            const selectedRatingInput = document.querySelector('input[name="comment-rating"]:checked');
+            const selectedGuideRatingInput = document.querySelector('input[name="guide-rating"]:checked');
 
-        if (!isLoggedIn) {
-            alert('Debes iniciar sesión con tu correo para dejar una opinión.');
-            return;
-        }
+            if (!selectedRatingInput || !selectedGuideRatingInput) {
+                alert("Por favor, selecciona cuántas estrellas le das a la experiencia Y al guía.");
+                return;
+            }
 
-        // 2. Validar si el usuario tiene una reserva comprada para ESTA experiencia
-        const reservas = JSON.parse(localStorage.getItem('sc_reservas')) || [];
-        const tieneReserva = reservas.some(r => 
-            r.usuario === emailUsuario && 
-            r.experiencia === exp.title
-        );
+            // 5. Validate comment text
+            if (!textInput || !textInput.value.trim()) {
+                alert("Por favor, escribe tu comentario antes de enviar.");
+                return;
+            }
 
-        if (!tieneReserva) {
-            alert(`Aún no puedes comentar. Debes tener una reserva confirmada para "${exp.title}".`);
-            return;
-        }
+            // 6. Build the comment using the logged-in user's name automatically
+            const estado = SelvaDB.usuarioActual();
+            const newComment = {
+                name: estado.nombre || 'Turista',
+                email: emailUsuario,
+                rating: parseInt(selectedRatingInput.value),
+                guideRating: parseInt(selectedGuideRatingInput.value),
+                text: textInput.value.trim(),
+                date: new Date().toLocaleDateString('es-ES')
+            };
 
-        // 3. Capturar las estrellas de la Experiencia y del Guía
-        const selectedRatingInput = document.querySelector('input[name="comment-rating"]:checked');
-        const selectedGuideRatingInput = document.querySelector('input[name="guide-rating"]:checked');
+            // 7. Save
+            comments.unshift(newComment);
+            localStorage.setItem(commentsStorageKey, JSON.stringify(comments));
 
-        // Validar que haya tocado las estrellas
-        if (!selectedRatingInput || !selectedGuideRatingInput) {
-            alert("Por favor, selecciona cuántas estrellas le das a la experiencia Y al guía.");
-            return;
-        }
-
-        // Validar que los campos de texto existan para evitar errores
-        if (!newNameInput || !newTextInput) {
-            console.error("No se encontraron los campos comment-name o comment-text en el HTML.");
-            return;
-        }
-
-        // 4. Crear el nuevo comentario
-        const newComment = {
-            name: newNameInput.value.trim() || 'Turista',
-            rating: parseInt(selectedRatingInput.value),
-            guideRating: parseInt(selectedGuideRatingInput.value),
-            text: newTextInput.value.trim(),
-            date: new Date().toLocaleDateString('es-ES')
-        };
-
-        // 5. Guardar en el almacenamiento local (LocalStorage)
-        comments.unshift(newComment); // Lo pone de primero en la lista
-        localStorage.setItem(commentsStorageKey, JSON.stringify(comments));
-
-        // 6. Actualizar la interfaz
-        renderComments();
-        if (typeof updateRatingsStats === 'function') {
+            // 8. Update UI
+            renderComments();
             updateRatingsStats();
-        }
 
-        // 7. Limpiar el formulario y las estrellas visuales
-        commentForm.reset();
-        document.querySelectorAll('.rating-stars label, .rating-stars-guide label').forEach(l => {
-            l.classList.remove('bi-star-fill');
-            l.classList.add('bi-star');
+            // 9. Reset form and stars
+            commentForm.reset();
+            actualizarCampoNombre(); // Re-fill the name after reset
+            document.querySelectorAll('.rating-stars label, .rating-stars-guide label').forEach(l => {
+                l.classList.remove('bi-star-fill');
+                l.classList.add('bi-star');
+            });
+
+            alert("¡Tu opinión se ha registrado con éxito!");
         });
-
-        alert("¡Tu opinión se ha registrado con éxito!");
-    });
-}
-}
+    }
 });

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Guía - SelvaConecta</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .guide-profile-hero {
+            background: linear-gradient(135deg, #198754 0%, #0f5132 100%);
+            color: white;
+            padding: 80px 0 50px 0;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+        .guide-profile-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: -60px;
+            border: none;
+            overflow: hidden;
+        }
+        .badge-credential {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            font-weight: 600;
+            border: 1px solid rgba(25, 135, 84, 0.2);
+        }
+        .skill-tag {
+            background: #f8f9fa;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            color: #495057;
+            font-weight: 500;
+            display: inline-block;
+            border: 1px solid #e9ecef;
+            margin: 4px;
+        }
+        .guide-avatar-large {
+            width: 140px;
+            height: 140px;
+            font-size: 3.5rem;
+            border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .experience-card-hover {
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .experience-card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <img src="logo.png" alt="SelvaConecta" class="logo">
+            <span class="ms-2 brand-name font-outfit fw-bold text-success">SelvaConecta</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="ms-auto d-flex flex-column flex-lg-row align-items-lg-center gap-3 mt-2 mt-lg-0" id="navbar-buttons-container">
+                <a href="index.html" class="btn btn-outline-success rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i>Volver al inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="guide-profile-hero text-center text-md-start">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-md-auto d-flex justify-content-center">
+                <div id="guide-avatar-placeholder" class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center guide-avatar-large fw-bold">
+                    --
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+                    <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill font-outfit">
+                        <i class="bi bi-patch-check-fill me-1"></i>GUÍA CERTIFICADO
+                    </span>
+                    <span class="badge bg-success-subtle text-white border border-white-50 px-3 py-2 rounded-pill font-outfit">
+                        <i class="bi bi-star-fill text-warning me-1"></i> <span id="guide-rating-num">--</span> (<span id="guide-reviews-text">--</span>)
+                    </span>
+                </div>
+                <h1 class="font-outfit fw-bold mb-1 display-5" id="guide-name">Cargando Guía...</h1>
+                <p class="fs-5 opacity-90 mb-0 font-outfit" id="guide-title">---</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container py-5 mb-5">
+    <div class="row g-4">
+        <!-- Sidebar Contact Info -->
+        <div class="col-lg-4 order-lg-2">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h5 class="font-outfit fw-bold text-dark mb-4">
+                    <i class="bi bi-chat-dots-fill text-success me-2"></i>Contacto Directo
+                </h5>
+                <p class="text-muted small">Puedes comunicarte directamente con el guía para resolver dudas específicas sobre la experiencia, clima o equipamiento recomendado.</p>
+                
+                <div class="d-flex flex-column gap-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light text-success rounded-circle p-2 d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <div class="text-secondary small">Correo Electrónico</div>
+                            <div class="fw-semibold text-dark small" id="guide-email">---</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light text-success rounded-circle p-2 d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <div class="text-secondary small">Acreditación DIRCETUR</div>
+                            <div class="fw-semibold text-dark small" id="guide-dircetur">---</div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#" id="btn-guide-whatsapp" target="_blank" class="btn btn-success w-100 py-3 rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-whatsapp fs-5"></i> Contactar por WhatsApp
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Body -->
+        <div class="col-lg-8 order-lg-1">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                <h3 class="font-outfit fw-bold text-dark mb-3">Sobre mí</h3>
+                <p class="text-secondary lead fs-6 lh-lg mb-4" id="guide-bio">---</p>
+
+                <hr class="my-4">
+
+                <h5 class="font-outfit fw-bold text-dark mb-3">Especialidades y Habilidades</h5>
+                <div id="guide-skills-list" class="mb-4 d-flex flex-wrap">
+                    <!-- Skills will be injected here -->
+                </div>
+
+                <h5 class="font-outfit fw-bold text-dark mb-3">Idiomas</h5>
+                <p class="text-secondary mb-4" id="guide-languages"><i class="bi bi-translate text-success me-2"></i>---</p>
+
+                <hr class="my-4">
+
+                <h4 class="font-outfit fw-bold text-dark mb-4">Experiencia que lidero</h4>
+                <div class="card experience-card-hover border-0 shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-sm-5 bg-secondary position-relative" style="min-height: 180px;" id="experience-img-container">
+                            <!-- Image injected as background -->
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="card-body p-4 d-flex flex-column h-100 justify-content-between">
+                                <div>
+                                    <span class="badge bg-success-subtle text-success mb-2 px-2 py-1">Turismo Vivencial</span>
+                                    <h5 class="font-outfit fw-bold text-dark mb-2" id="exp-title-card">Tour en la Amazonía</h5>
+                                    <p class="text-muted small mb-0">Vive una aventura inolvidable de la mano de un guía local certificado.</p>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="#" id="link-exp-card" class="btn btn-success rounded-pill px-4 btn-sm fw-semibold">
+                                        Ver Experiencia <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-4">
+    <div class="container text-center">
+        <img src="logo.png" alt="SelvaConecta" class="logo mb-2 filter-white" style="height:36px;">
+        <p class="mb-0 text-white-50 small">&copy; 2026 SelvaConecta. Viajes sostenibles con guías locales calificados.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="db.js"></script>
+<script src="auth.js"></script>
+<script>
+    const GUIDES = {
+        'manuel': {
+            name: 'Manuel Chanchari',
+            title: 'Guía Especialista en Selva Baja',
+            initials: 'MC',
+            rating: '4.8',
+            reviewsCount: '12 opiniones',
+            bio: 'Nacido en la cuenca del río Amazonas, Manuel cuenta con más de 15 años de experiencia guiando a viajeros de todo el mundo. Es especialista en avistamiento de delfines rosados y senderos botánicos de la selva inundable.',
+            dircetur: 'Reg. DIRCETUR: N° 10842-GL',
+            idiomas: 'Español, Inglés (básico) y Cocama',
+            skills: ['Navegación fluvial', 'Identificación de plantas medicinales', 'Fotografía de aves', 'Supervivencia en selva'],
+            whatsapp: '51987654321',
+            email: 'manuel.chanchari@selvaconecta.org',
+            expTitle: 'Tour en la Amazonía',
+            expFile: 'detalleAma.html',
+            expImgUrl: 'images/exp-ama.jpg' // we can let CSS color or a fallback pattern handle this
+        },
+        'mateo': {
+            name: 'Curaca Mateo Yagua',
+            title: 'Líder Comunitario y Guía Cultural',
+            initials: 'MY',
+            rating: '4.9',
+            reviewsCount: '24 opiniones',
+            bio: 'Mateo es el líder espiritual y cultural de su comunidad. Dedica su vida a preservar las costumbres ancestrales de los Yaguas y a compartirlas con respeto y orgullo con los visitantes conscientes.',
+            dircetur: 'Reg. DIRCETUR: N° 20119-GC',
+            idiomas: 'Yagua (nativo) y Español',
+            skills: ['Medicina ancestral', 'Uso de cerbatana', 'Cantos tradicionales', 'Elaboración de artesanías'],
+            whatsapp: '51987654322',
+            email: 'mateo.yagua@selvaconecta.org',
+            expTitle: 'Comunidad Nativa Yagua',
+            expFile: 'detalleYagu.html',
+            expImgUrl: 'images/exp-yagu.jpg'
+        },
+        'juan': {
+            name: 'Juan Panduro',
+            title: 'Guía Experto en Ornitología y Fauna',
+            initials: 'JP',
+            rating: '4.7',
+            reviewsCount: '9 opiniones',
+            bio: 'Juan es un apasionado de la biodiversidad de la reserva Pacaya Samiria. Con su increíble capacidad para detectar y recrear cantos de aves, te garantizará ver la fauna más asombrosa y oculta de la selva.',
+            dircetur: 'Reg. DIRCETUR: N° 10557-GL',
+            idiomas: 'Español, Inglés (intermedio)',
+            skills: ['Ornitología y avistamiento', 'Primeros auxilios WFR', 'Identificación de reptiles', 'Navegación nocturna'],
+            whatsapp: '51987654323',
+            email: 'juan.panduro@selvaconecta.org',
+            expTitle: 'Avistamiento de Fauna',
+            expFile: 'detalleFauna.html',
+            expImgUrl: 'images/exp-fauna.jpg'
+        },
+        'carlos': {
+            name: 'Carlos Gaviria',
+            title: 'Instructor y Guía de Aventura Fluvial',
+            initials: 'CG',
+            rating: '4.6',
+            reviewsCount: '15 opiniones',
+            bio: 'Carlos es deportista de aventura y especialista en aguas rápidas. Ha recorrido los principales afluentes de la Amazonía peruana y vela por la máxima seguridad de los viajeros mientras experimentan la adrenalina del río.',
+            dircetur: 'Reg. DIRCETUR: N° 11094-GA',
+            idiomas: 'Español, Inglés (fluido)',
+            skills: ['Rescate en ríos rápidos', 'Instrucción de kayak/canotaje', 'Supervivencia en selva', 'Campamentos sostenibles'],
+            whatsapp: '51987654324',
+            email: 'carlos.gaviria@selvaconecta.org',
+            expTitle: 'Canotaje Amazónico',
+            expFile: 'detalleCanotaje.html',
+            expImgUrl: 'images/exp-canotaje.jpg'
+        },
+        'elena': {
+            name: 'Elena Tananta',
+            title: 'Guía Intérprete y de Ecoturismo',
+            initials: 'ET',
+            rating: '4.8',
+            reviewsCount: '18 opiniones',
+            bio: 'Elena posee una maestría en Ecoturismo y una conexión profunda con el bosque primario. Se especializa en caminatas nocturnas donde revela el maravilloso e invisible mundo de los insectos y hongos luminiscentes.',
+            dircetur: 'Reg. DIRCETUR: N° 10981-GL',
+            idiomas: 'Español, Inglés (fluido), Francés (básico)',
+            skills: ['Caminatas nocturnas', 'Educación ambiental', 'Primeros auxilios', 'Liderazgo ecoturístico'],
+            whatsapp: '51987654325',
+            email: 'elena.tananta@selvaconecta.org',
+            expTitle: 'Caminata en la Amazonía',
+            expFile: 'detalleCaminata.html',
+            expImgUrl: 'images/exp-caminata.jpg'
+        },
+        'francisco': {
+            name: 'Francisco Murayari',
+            title: 'Maestro Pescador Artesanal',
+            initials: 'FM',
+            rating: '4.9',
+            reviewsCount: '32 opiniones',
+            bio: 'Francisco heredó las técnicas de pesca de su abuelo y conoce como nadie el comportamiento de las mareas y los peces amazónicos. Es famoso por enseñar a pescar pirañas usando las varas tradicionales de bambú.',
+            dircetur: 'Reg. DIRCETUR: N° 10443-GP',
+            idiomas: 'Español y Quechua del Pastaza',
+            skills: ['Pesca artesanal de piraña', 'Artesanía de bambú', 'Gastronomía amazónica', 'Orientación fluvial'],
+            whatsapp: '51987654326',
+            email: 'francisco.murayari@selvaconecta.org',
+            expTitle: 'Pesca Artesanal',
+            expFile: 'detallePesca.html',
+            expImgUrl: 'images/exp-pesca.jpg'
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Read URL parameter
+        const params = new URLSearchParams(window.location.search);
+        const guideId = (params.get('id') || 'manuel').toLowerCase();
+        
+        const guide = GUIDES[guideId] || GUIDES['manuel'];
+
+        // Populate elements
+        document.getElementById('guide-name').textContent = guide.name;
+        document.title = `${guide.name} - Perfil del Guía - SelvaConecta`;
+        document.getElementById('guide-title').textContent = guide.title;
+        document.getElementById('guide-rating-num').textContent = guide.rating;
+        document.getElementById('guide-reviews-text').textContent = guide.reviewsCount;
+        document.getElementById('guide-email').textContent = guide.email;
+        document.getElementById('guide-dircetur').textContent = guide.dircetur;
+        document.getElementById('guide-bio').textContent = guide.bio;
+        document.getElementById('guide-languages').innerHTML = `<i class="bi bi-translate text-success me-2"></i>${guide.idiomas}`;
+        
+        // Initials avatar
+        const avatarEl = document.getElementById('guide-avatar-placeholder');
+        if (avatarEl) {
+            avatarEl.textContent = guide.initials;
+        }
+
+        // WhatsApp Link
+        const waBtn = document.getElementById('btn-guide-whatsapp');
+        if (waBtn) {
+            const message = encodeURIComponent(`Hola ${guide.name}, vengo de SelvaConecta y me gustaría consultar sobre tu experiencia de "${guide.expTitle}".`);
+            waBtn.href = `https://wa.me/${guide.whatsapp}?text=${message}`;
+        }
+
+        // Skills
+        const skillsContainer = document.getElementById('guide-skills-list');
+        if (skillsContainer) {
+            skillsContainer.innerHTML = '';
+            guide.skills.forEach(s => {
+                skillsContainer.innerHTML += `<span class="skill-tag">${s}</span>`;
+            });
+        }
+
+        // Experience Card
+        document.getElementById('exp-title-card').textContent = guide.expTitle;
+        document.getElementById('link-exp-card').href = guide.expFile;
+        
+        const imgContainer = document.getElementById('experience-img-container');
+        if (imgContainer) {
+            // Let's style a beautiful green gradient background instead of a missing image
+            imgContainer.style.background = 'linear-gradient(135deg, #20c997 0%, #198754 100%)';
+            imgContainer.innerHTML = `
+                <div class="d-flex align-items-center justify-content-center h-100 text-white font-outfit fw-bold">
+                    <i class="bi bi-tree fs-1 opacity-50"></i>
+                </div>
+            `;
+        }
+    });
+</script>
+</body>
+</html>

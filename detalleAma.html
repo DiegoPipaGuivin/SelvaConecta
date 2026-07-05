@@ -154,9 +154,13 @@
             <!-- Guide Profile -->
             <h4 class="font-outfit fw-semibold mb-3">Tu Guía Local Calificado</h4>
             <div class="guide-card shadow-sm mb-5">
-                <img src="logo.png" class="guide-avatar" alt="Manuel Chanchari" id="guide-photo-placeholder">
+                <a href="perfil_guia.html?id=manuel">
+                    <img src="logo.png" class="guide-avatar cursor-pointer" alt="Manuel Chanchari" id="guide-photo-placeholder">
+                </a>
                 <div>
-                    <h5 class="mb-1 font-outfit fw-bold text-success">Manuel Chanchari</h5>
+                    <h5 class="mb-1 font-outfit fw-bold text-success">
+                        <a href="perfil_guia.html?id=manuel" class="text-success text-decoration-none">Manuel Chanchari</a>
+                    </h5>
                     <p class="text-muted small mb-2"><i class="bi bi-patch-check-fill text-success me-1"></i> Guía Certificado - Etnia Kukama</p>
                     <p class="mb-0 text-muted fs-6">
                         "Nací y crecí a orillas del Amazonas. Llevo más de 15 años guiando a viajeros y compartiendo la sabiduría botánica de mis ancestros. Te enseñaré a escuchar la selva".
@@ -272,7 +276,6 @@
             <div class="bg-white p-4 rounded-4 border shadow-sm">
                 <h4 class="font-outfit fw-bold mb-3">Deja tu opinión</h4>
                 <form id="comment-form">
-                    <form id="commentForm">
                     <div class="mb-3">
     <label class="form-label fw-semibold text-dark">Califica la Experiencia General:</label>
     <div class="rating-stars d-flex gap-2 fs-4 text-warning">
@@ -295,9 +298,8 @@
     </div>
 </div>
                     <div class="mb-3">
-                        <label for="comment-author-name" class="form-label fw-semibold text-muted small">TU NOMBRE</label>
-                        <input type="text" id="comment-author-name" class="form-control booking-input" placeholder="Nombre completo" required>
-                        <div id="comment-name-error" class="text-danger small mt-1" style="display:none;"></div>
+                        <label class="form-label fw-semibold text-muted small">TU NOMBRE</label>
+                        <input type="text" id="comment-author-name" class="form-control booking-input bg-light" placeholder="Inicia sesión para opinar" readonly disabled>
                     </div>
                     <div class="mb-3">
                         <label for="comment-text" class="form-label fw-semibold text-muted small">TU COMENTARIO</label>

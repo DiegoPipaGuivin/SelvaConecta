@@ -22,13 +22,11 @@ if (perfilAvatar && nombre) {
 }
 
 // --- Cerrar Sesión ---
-const btnLogout = document.getElementById('btn-logout');
-if (btnLogout) {
-    btnLogout.addEventListener('click', () => {
-        SelvaDB.cerrarSesion();
-        window.location.href = 'index.html';
-    });
-}
+// El botón de "Cerrar Sesión" de esta página ahora lo inserta y maneja
+// auth.js (SelvaAuth.actualizarNavbar), junto con el resto del bloque de
+// usuario logueado (avatar, nombre, "Mi Perfil"). Antes existía también un
+// botón fijo aquí con su propio listener, lo que provocaba que "Cerrar
+// Sesión" apareciera duplicado en la parte superior del perfil.
 
 // --- Función Helper para Evitar Errores de Referencia ---
 function escapeHTML(str) {

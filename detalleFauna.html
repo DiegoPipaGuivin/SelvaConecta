@@ -154,9 +154,13 @@
             <!-- Guide Profile -->
             <h4 class="font-outfit fw-semibold mb-3">Tu Guía Local Calificado</h4>
             <div class="guide-card shadow-sm mb-5">
-                <img src="logo.png" class="guide-avatar" alt="Juan Panduro" id="guide-photo-placeholder">
+                <a href="perfil_guia.html?id=juan">
+                    <img src="logo.png" class="guide-avatar cursor-pointer" alt="Juan Panduro" id="guide-photo-placeholder">
+                </a>
                 <div>
-                    <h5 class="mb-1 font-outfit fw-bold text-success">Juan Panduro</h5>
+                    <h5 class="mb-1 font-outfit fw-bold text-success">
+                        <a href="perfil_guia.html?id=juan" class="text-success text-decoration-none">Juan Panduro</a>
+                    </h5>
                     <p class="text-muted small mb-2"><i class="bi bi-patch-check-fill text-success me-1"></i> Rastreador Local - Experto en Biodiversidad</p>
                     <p class="mb-0 text-muted fs-6">
                         "He vivido toda mi vida estudiando el comportamiento de los animales de la selva. Te enseñaré a identificar huellas de mamíferos, cantos de aves y a ver lo que otros no perciben a simple vista".
@@ -272,7 +276,7 @@
             <div class="bg-white p-4 rounded-4 border shadow-sm">
                 <h4 class="font-outfit fw-bold mb-3">Deja tu opinión</h4>
                
-                  <form id="CommentForm">
+                <form id="comment-form">
                     <div class="mb-3">
     <label class="form-label fw-semibold text-dark">Califica la Experiencia General:</label>
     <div class="rating-stars d-flex gap-2 fs-4 text-warning">
@@ -293,11 +297,10 @@
         <input type="radio" name="guide-rating" value="4" id="gstar4" class="d-none"><label for="gstar4" class="bi bi-star cursor-pointer"></label>
         <input type="radio" name="guide-rating" value="5" id="gstar5" class="d-none"><label for="gstar5" class="bi bi-star cursor-pointer"></label>
     </div>
-</div>  
+</div>
                     <div class="mb-3">
-                        <label for="comment-author-name" class="form-label fw-semibold text-muted small">TU NOMBRE</label>
-                        <input type="text" id="comment-author-name" class="form-control booking-input" placeholder="Nombre completo" required>
-                        <div id="comment-name-error" class="text-danger small mt-1" style="display:none;"></div>
+                        <label class="form-label fw-semibold text-muted small">TU NOMBRE</label>
+                        <input type="text" id="comment-author-name" class="form-control booking-input bg-light" placeholder="Inicia sesión para opinar" readonly disabled>
                     </div>
                     <div class="mb-3">
                         <label for="comment-text" class="form-label fw-semibold text-muted small">TU COMENTARIO</label>
